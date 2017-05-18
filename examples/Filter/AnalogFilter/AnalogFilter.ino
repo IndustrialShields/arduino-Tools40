@@ -22,22 +22,32 @@
 // Sample period: 5ms (setting it to 0, samples are taken as fast as possible)
 AnalogFilter<10, 5> filter;
 
+#if defined(ARDBOX_ANALOG)
+int pin = I0_1;
+#elif defined(ARDBOX_RELAY)
+int pin = I0_4;
+#elif defined(MDUINO_19R) || defined(MDUINO_38R) || defined(MDUINO_57R)
+int pin = I0_2;
+#elif defined(MDUINO_21) || defined(MDUINO_42) || defined(MDUINO_58)
+int pin = I0_7;
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
   // Init Serial port
   Serial.begin(9600L);
 
-  // Set I0.7 as INPUT pin
-  pinMode(I0_7, INPUT);
+  // Set pin as INPUT pin
+  pinMode(pin, INPUT);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  // Read I0.7 value
-  int i0_7 = analogRead(I0_7);
+  // Read pin value
+  int value = analogRead(pin);
 
   // Filter it
-  int filtered = filter.update(i0_7);
+  int filtered = filter.update(value);
 
   // Print the filtered value
   Serial.println(filtered);
