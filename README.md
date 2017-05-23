@@ -8,16 +8,16 @@ Tools40 implements some common functions and modules on industrial environment f
 1. The [Arduino IDE](http://www.arduino.cc) 1.8.0 or higher
 
 ### Installing
-2. Download the [library](http://www.github.com/industrialshields/arduino-tools40) from the GitHub as a "ZIP" file.
+1. Download the [library](http://www.github.com/industrialshields/arduino-tools40) from the GitHub as a "ZIP" file.
 2. From the Arduino IDE, select the downloaded "ZIP" file in the menu "Sketch/Inlcude library/Add .ZIP library".
-2. Now you can open any example from the "File/Examples/Tools40" menu.
+3. Now you can open any example from the "File/Examples/Tools40" menu.
 
 ## Reference
 Tools40 contains different modules:
 
-3. [SimpleComm](#SimpleComm)
-3. [Filter](#Filter)
-3. [Timer](#Timer)
+1. [SimpleComm](#simplecomm)
+2. [Filter](#filter)
+3. [Timer](#timer)
 
 ### SimpleComm
 
