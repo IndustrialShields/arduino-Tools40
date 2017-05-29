@@ -6,6 +6,7 @@ Tools40 implements some common functions and modules on industrial environment f
 
 ### Prerequisites
 1. The [Arduino IDE](http://www.arduino.cc) 1.8.0 or higher
+2. The [Industrial Shields Arduino boards](http://blog.industrialshields.com/en/installing-industrial-shields-equipment-to-the-arduino-ide/) (optional, used in the examples)
 
 ### Installing
 1. Download the [library](http://www.github.com/industrialshields/arduino-tools40) from the GitHub as a "ZIP" file.
