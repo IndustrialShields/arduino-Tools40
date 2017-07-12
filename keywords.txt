@@ -30,6 +30,8 @@ setDestination	KEYWORD2
 setSource	KEYWORD2
 setType	KEYWORD2
 send	KEYWORD2
+startTrain	KEYWORD2
+stopTrain	KEYWORD2
 update	KEYWORD2
 
 # CONSTANTS (LITERAL1)

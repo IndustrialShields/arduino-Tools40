@@ -42,7 +42,12 @@
 
 #define SYN_VALUE 0x02
 
-static uint8_t _buffer[SYN_LEN + LEN_LEN + 256];
+#define MAX_DATA_LEN 128
+#define BUFFER_SIZE (SYN_LEN + LEN_LEN + HDR_LEN + MAX_DATA_LEN + CRC_LEN)
+
+static uint8_t _txBuffer[BUFFER_SIZE];
+static uint8_t _rxBuffer[BUFFER_SIZE];
+static uint8_t _rxBufferLen = 0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SimpleCommClass::SimpleCommClass() {
@@ -62,7 +67,11 @@ bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destina
 	uint8_t dlen;
 	const uint8_t *data = (const uint8_t *) packet.getData(dlen);
 
-	uint8_t *ptr = _buffer;
+	if (dlen > MAX_DATA_LEN) {
+		return false;
+	}
+
+	uint8_t *ptr = _txBuffer;
 	*ptr++ = SYN_VALUE;
 	*ptr++ = PKT_LEN(dlen);
 	*ptr++ = packet.getDestination();
@@ -72,10 +81,10 @@ bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destina
 		memcpy(ptr, data, dlen);
 		ptr += dlen;
 	}
-	*ptr++ = calcCRC(_buffer + SYN_LEN + LEN_LEN, HDR_LEN + dlen);
+	*ptr++ = calcCRC(_txBuffer + SYN_LEN + LEN_LEN, HDR_LEN + dlen);
 
-	size_t tlen = ptr - _buffer;
-	return stream.write(_buffer, tlen) == tlen;
+	size_t tlen = ptr - _txBuffer;
+	return stream.write(_txBuffer, tlen) == tlen;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,43 +95,55 @@ bool SimpleCommClass::send(Stream &stream, SimplePacket &packet, uint8_t destina
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool SimpleCommClass::receive(Stream &stream, SimplePacket &packet) {
-	while (stream.available() >= SYN_LEN + LEN_LEN) {
-		if (stream.read() != SYN_VALUE) {
+	while (stream.available()) {
+		uint8_t in = stream.read();
+
+		if ((_rxBufferLen == 0) && (in != SYN_VALUE)) {
 			// Unsynchronized
 			continue;
 		}
 
-		// Get packet length
-		uint8_t tlen = stream.read();
-
-		// Get packet
-		if (stream.readBytes(_buffer, tlen) != tlen) {
-			// Timeout
+		if ((_rxBufferLen == SYN_LEN) && ((in > (HDR_LEN + MAX_DATA_LEN + CRC_LEN)) || (in < (HDR_LEN + CRC_LEN)))) {
+			// Invalid data length
+			_rxBufferLen = 0;
 			continue;
 		}
 
-		// Check CRC
-		if (_buffer[tlen - CRC_LEN] != calcCRC(_buffer, tlen - CRC_LEN)) {
-			// Invalid CRC
-			continue;
-		}
+		_rxBuffer[_rxBufferLen++] = in;
 
-		// Check destination
-		if (_buffer[0] != _address) {
-			// It is not for me
-			continue;
-		}
+		if (_rxBufferLen > SYN_LEN + LEN_LEN + HDR_LEN) {
+			uint8_t tlen = _rxBuffer[1];
+			if (_rxBufferLen == (tlen + SYN_LEN + LEN_LEN)) {
+				// Buffer complete
 
-		uint8_t *ptr = _buffer;
-		packet.setDestination(*ptr++);
-		packet.setSource(*ptr++);
-		packet.setType(*ptr++);
-		if (!packet.setData(ptr, tlen - HDR_LEN - CRC_LEN)) {
-			// Internal error
-			continue;
-		}
+				// Check CRC
+				if (_rxBuffer[SYN_LEN + LEN_LEN + tlen - CRC_LEN] != calcCRC(_rxBuffer + SYN_LEN + LEN_LEN, tlen - CRC_LEN)) {
+					// Invalid CRC
+					_rxBufferLen = 0;
+					continue;
+				}
 
-		return true;
+				// Check destination
+				if (_rxBuffer[SYN_LEN + LEN_LEN] != _address) {
+					// It is not for me
+					_rxBufferLen = 0;
+					continue;
+				}
+
+				uint8_t *ptr = _rxBuffer + SYN_LEN + LEN_LEN;
+				packet.setDestination(*ptr++);
+				packet.setSource(*ptr++);
+				packet.setType(*ptr++);
+				if (!packet.setData(ptr, tlen - HDR_LEN - CRC_LEN)) {
+					// Internal error
+					_rxBufferLen = 0;
+					return false;
+				}
+
+				_rxBufferLen = 0;
+				return true;
+			}
+		}
 	}
 
 	return false;

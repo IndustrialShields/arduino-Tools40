@@ -19,6 +19,7 @@ Tools40 contains different modules:
 1. [SimpleComm](#simplecomm)
 2. [Filter](#filter)
 3. [Timer](#timer)
+4. [Train](#train)
 
 ### SimpleComm
 
@@ -157,5 +158,39 @@ int in = digitalRead(I0_0);
 if (TOFF.update(in) == HIGH) {
     // Enter here after I0.0 is LOW during 1000ms and until it becomes HIGH
 }
+```
 
+### Train
 
+```c++
+#include <Train.h>
+```
+
+The Train module provides functions for starting and stopping a train of pulses at the desired frequency.
+
+The `startTrain` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 6.
+
+```c++
+pinMode(3, OUTPUT);
+startTrain(3, 2000, 6);
+```
+
+The precision argument is related with the internal prescaler register value according to `prescaler = 2 ^ precision`.
+
+The `stopTrain` function stops the train of pulses.
+
+```c++
+stopTrain(3);
+```
+
+*IMPORTANT:* On MDUINO-21, MDUINO-42 and MDUINO-58 it is possible to use this functions in outputs:
+- TIMER0: Q0.5 and Q2.6
+- TIMER1: Q2.5
+- TIMER2: Q1.6
+- TIMER3: PIN2, PIN3 and Q0.6
+- TIMER4: Q0.7, Q1.5 and Q1.7
+- TIMER5: Q1.3, Q1.4 and Q2.0
+
+*IMPORTANT:* On ARDBOX-Analog it is possible to use this functions in outputs *TODO*. (some of them are using the same timer, and use the same frequency)
+
+*IMPORTANT:* Some outputs share the same timer, so they work at the same frequency.
