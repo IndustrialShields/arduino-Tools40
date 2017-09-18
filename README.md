@@ -19,7 +19,7 @@ Tools40 contains different modules:
 1. [SimpleComm](#simplecomm)
 2. [Filter](#filter)
 3. [Timer](#timer)
-4. [Train](#train)
+4. [Pulses](#pulses)
 
 ### SimpleComm
 
@@ -160,22 +160,20 @@ if (TOFF.update(in) == HIGH) {
 }
 ```
 
-### Train
+### Pulses
 
 ```c++
-#include <Train.h>
+#include <Pulses.h>
 ```
 
-The Train module provides functions for starting and stopping a train of pulses at the desired frequency.
+The Pulses module provides functions for starting and stopping a train of pulses at the desired frequency.
 
-The `startTrain` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 6.
+The `startTrain` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 3.
 
 ```c++
 pinMode(3, OUTPUT);
-startTrain(3, 2000, 6);
+startTrain(3, 2000, 3);
 ```
-
-The precision argument is related with the internal prescaler register value according to `prescaler = 2 ^ precision`.
 
 The `stopTrain` function stops the train of pulses.
 
