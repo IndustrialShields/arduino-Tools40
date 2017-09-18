@@ -19,7 +19,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SimplePacket::SimplePacket() {
-	_data = NULL;
+	_data = nullptr;
 	_len = 0;
 	_destination = 0;
 	_source = 0;
@@ -52,7 +52,7 @@ bool SimplePacket::init(uint8_t len) {
 void SimplePacket::clear() {
 	if (_data) {
 		delete[] _data;
-		_data = NULL;
+		_data = nullptr;
 	}
 	_len = 0;
 }
