@@ -168,14 +168,14 @@ if (TOFF.update(in) == HIGH) {
 
 The Pulses module provides functions for starting and stopping a train of pulses at the desired frequency.
 
-The ```c++startPulses(Pin, Frequency, Precision)``` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 3.
+The ```startPulses(Pin, Frequency, Precision)``` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 3.
 
 ```c++
 pinMode(3, OUTPUT);
 startPulses(3, 2000, 3);
 ```
 
-The ```c++stopPulses(Pin)``` function stops the train of pulses.
+The ```stopPulses(Pin)``` function stops the train of pulses.
 
 ```c++
 stopPulses(3);
@@ -203,7 +203,7 @@ On MDUINO-21, MDUINO-42 and MDUINO-58 it is possible to use this functions in ou
 
 **IMPORTANT**: It is not possible to have different frequencies between the same Timer Pin’s. Some outputs share the same timer, so they work at the same frequency.
 
-**CAUTION!!!** When the Timer0 pins are used, all the time functions change their functionality as ```c++delay()```, ```c++millis()```,```c++micros()```,```c++delayMicroseconds()``` and others.
+**CAUTION!!!** When the Timer0 pins are used, all the time functions change their functionality as ```delay()```, ```millis()```,```micros()```,```delayMicroseconds()``` and others.
 
 Next it is showed recommended precision between different frequencies:
 
