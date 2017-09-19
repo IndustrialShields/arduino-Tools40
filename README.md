@@ -201,9 +201,9 @@ On MDUINO-21, MDUINO-42 and MDUINO-58 it is possible to use this functions in ou
 
 – TIMER5: Q1.3, Q1.4 and Q2.0
 
-IMPORTANT: It is not possible to have different frequencies between the same Timer Pin’s. Some outputs share the same timer, so they work at the same frequency.
+**IMPORTANT**: It is not possible to have different frequencies between the same Timer Pin’s. Some outputs share the same timer, so they work at the same frequency.
 
-CAUTION!!! When the Timer0 pins are used, all the time functions change their functionality as delay(), millis(),micros(),delayMicroseconds() and others.
+**CAUTION!!!** When the Timer0 pins are used, all the time functions change their functionality as delay(), millis(),micros(),delayMicroseconds() and others.
 
 Next it is showed recommended precision between different frequencies:
 
