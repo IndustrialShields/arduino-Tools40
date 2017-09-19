@@ -19,7 +19,7 @@ Tools40 contains different modules:
 1. [SimpleComm](#simplecomm)
 2. [Filter](#filter)
 3. [Timer](#timer)
-4. [Train](#train)
+4. [Pulses](#pulses)
 
 ### SimpleComm
 
