@@ -18,19 +18,9 @@
 #include <Filter.h>
 
 // Create a filter
-// Number of samples: 10
-// Sample period: 5ms (setting it to 0, samples are taken as fast as possible)
-AnalogFilter<10, 5> filter;
-
-#if defined(ARDBOX_ANALOG)
-const int pin = I0_1;
-#elif defined(ARDBOX_RELAY)
-const int pin = I0_4;
-#elif defined(MDUINO_19R) || defined(MDUINO_38R) || defined(MDUINO_57R)
-const int pin = I0_2;
-#elif defined(MDUINO_21) || defined(MDUINO_42) || defined(MDUINO_58)
-const int pin = I0_7;
-#endif
+// Filtering time: 200ms
+DigitalFilter<200> filter;
+const int pin = I0_0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
@@ -44,7 +34,7 @@ void setup() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
   // Read pin value
-  int value = analogRead(pin);
+  int value = digitalRead(pin);
 
   // Filter it
   int filtered = filter.update(value);
