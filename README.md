@@ -20,6 +20,7 @@ Tools40 contains different modules:
 2. [Filter](#filter)
 3. [Timer](#timer)
 4. [Pulses](#pulses)
+5. [Counter](#counter)
 
 ### SimpleComm
 
@@ -120,9 +121,7 @@ aFilter.update(input);
 ### Timer
 
 ```c++
-#include <PulseTimer.h>
-#include <OnDelayTimer.h>
-#include <OffDelayTimer.h>
+#include <Timer.h>
 ```
 
 The Timer module provides three different kind of Timers, based on standard timers schemes:
@@ -168,7 +167,7 @@ if (TOFF.update(in) == HIGH) {
 
 The Pulses module provides functions for starting and stopping a train of pulses at the desired frequency.
 
-The `startPulses(Pin, Frequency, Precision)` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 3.
+The `startPulses(pin, frequency, precision)` function starts the train of pulses at the specified frequency and precision. The default frequency is 1kHz and the default precision is 3.
 
 ```c++
 pinMode(3, OUTPUT);
@@ -209,3 +208,29 @@ Next it is showed recommended precision between different frequencies:
 * Precision = 5: from 32kHz to 4MHz
 
 To have a high precision on the desired frequency, it is recommended to use the closer precision to the values of the previous table.
+
+### Counter
+
+```c++
+#include <Counter.h>
+```
+
+The Counter module provides a way of counting rising edges until a defined preset value.
+
+```c++
+Counter C(100);
+```
+
+The `Counter` returns HIGH when the internal counter is equal to the preset value.
+
+```c++
+int up = digitalRead(I0_0);
+int down = digitalRead(I0_1);
+int reset = digitalRead(I0_2);
+if (C.update(up, down, reset, preset) == HIGH) {
+    // Enter here when the counter is equal to 100
+	// The counter counts up when I0.0 rises
+	// The counter counts down when I0.1 rises
+	// The counter is set to zero when I0.2 is HIGH
+}
+```
