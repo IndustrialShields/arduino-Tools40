@@ -21,6 +21,7 @@ Tools40 contains different modules:
 3. [Timer](#timer)
 4. [Pulses](#pulses)
 5. [Counter](#counter)
+6. [ModbusRTUMaster](#modbusrtumaster)
 
 ### SimpleComm
 
@@ -234,3 +235,7 @@ if (C.update(up, down, reset, preset) == HIGH) {
 	// The counter is set to zero when I0.2 is HIGH
 }
 ```
+
+### ModbusRTUMaster
+
+TODO
