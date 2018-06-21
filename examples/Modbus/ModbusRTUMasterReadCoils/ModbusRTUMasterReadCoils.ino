@@ -16,10 +16,19 @@
  */
 
 #include <ModbusRTUMaster.h>
-#include <RS485.h>
 
-// Define the ModbusRTUMaster object, using the RS-485 port
+// Define the ModbusRTUMaster object, using the RS-485 or RS-232 port (depending on availability)
+#if defined HAVE_RS485_HARD
+#include <RS485.h>
 ModbusRTUMaster master(RS485);
+
+#elif defined HAVE_RS232_HARD
+#include <RS232.h>
+ModbusRTUMaster master(RS232);
+
+#else
+ModbusRTUMaster master(Serial1);
+#endif
 
 uint32_t lastSentTime = 0UL;
 
@@ -27,8 +36,8 @@ uint32_t lastSentTime = 0UL;
 void setup() {
   // Start the modbus master object.
   // It is possible to define the port rate (default: 19200)
-  // and the serial frame mode (default: 8N1)
-  master.begin();
+  // and the serial frame mode (default: 8E1)
+  master.begin(19200UL, 8E1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,14 +58,14 @@ void loop() {
 
   // Check available responses often
   if (master.isWaitingResponse()) {
-    ModbusRTCResponse response = master.available();
+    ModbusRTUResponse response = master.available();
     if (response) {
       if (response.hasError()) {
         // Response failure treatment. You can use response.getErrorCode()
         // to get the error code.
       } else {
         // Get the coil value from the response
-        bool coil = reponse.isCoilSet(0);
+        bool coil = response.isCoilSet(0);
 
         // Treat the rest of coils values...
       }
