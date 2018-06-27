@@ -29,7 +29,7 @@ class ModbusDevice {
 
 class ModbusFrame {
 	public:
-		explicit ModbusFrame(uint8_t *pdu = nullptr);
+		explicit ModbusFrame(uint8_t slave, uint8_t *pdu = nullptr);
 
 	public:
 		inline bool isNull() const {
@@ -43,11 +43,12 @@ class ModbusFrame {
 
 	protected:
 		uint8_t *_pdu;
+		uint8_t _slave;
 };
 
 class ModbusResponse : public ModbusFrame {
 	public:
-		explicit ModbusResponse(uint8_t *pdu = nullptr);
+		explicit ModbusResponse(uint8_t slave, uint8_t *pdu = nullptr);
 
 	public:
 		inline bool hasError() const {
@@ -56,6 +57,10 @@ class ModbusResponse : public ModbusFrame {
 
 		inline uint8_t getErrorCode() const {
 			return _pdu[1];
+		}
+
+		inline uint8_t getSlave() const {
+			return _slave;
 		}
 
 		inline uint8_t getFC() const {

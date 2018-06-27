@@ -34,10 +34,12 @@ uint32_t lastSentTime = 0UL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
+  Serial.begin(9600UL);
+
   // Start the modbus master object.
   // It is possible to define the port rate (default: 19200)
-  // and the serial frame mode (default: 8E1)
-  master.begin(19200UL, 8E1);
+  // and the serial frame mode (default: SERIAL_8E1)
+  master.begin(19200UL, SERIAL_8E1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +60,7 @@ void loop() {
 
   // Check available responses often
   if (master.isWaitingResponse()) {
-    ModbusRTUResponse response = master.available();
+    ModbusResponse response = master.available();
     if (response) {
       if (response.hasError()) {
         // Response failure treatment. You can use response.getErrorCode()
@@ -68,6 +70,8 @@ void loop() {
         bool coil = response.isCoilSet(0);
 
         // Treat the rest of coils values...
+        Serial.print("Coil: ");
+        Serial.println(coil);
       }
     }
   }

@@ -1,12 +1,13 @@
 #include "Modbus.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ModbusFrame::ModbusFrame(uint8_t *pdu) {
+ModbusFrame::ModbusFrame(uint8_t slave, uint8_t *pdu) {
+	_slave = slave;
 	_pdu = pdu;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ModbusResponse::ModbusResponse(uint8_t *pdu) : ModbusFrame(pdu) {
+ModbusResponse::ModbusResponse(uint8_t slave, uint8_t *pdu) : ModbusFrame(slave, pdu) {
 
 }
 

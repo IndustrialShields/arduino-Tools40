@@ -3,13 +3,7 @@
 #include "utilities/crc16.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ModbusRTUResponse::ModbusRTUResponse(uint8_t slave, uint8_t *pdu) : ModbusResponse(pdu) {
-	_slave = slave;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusRTUMaster::ModbusRTUMaster(HardwareSerial &serial) : _serial(serial) {
-	_state = Idle;
 	_t35us = 0UL;
 	_t15us = 0UL;
 }
@@ -33,25 +27,22 @@ void ModbusRTUMaster::begin(uint32_t rate, int mode) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool ModbusRTUMaster::prepareRequest(uint8_t slave, uint8_t fc) {
-	if (_state != Idle) {
+	if (!isIdle()) {
 		// Invalid state
 		return false;
 	}
 
-	if (slave > 247) {
+	if (slave == 0 || slave > 247) {
 		// Invalid slave
 		return false;
 	}
 
-	_aduPtr = _adu;
 	_currentSlave = slave;
 	_currentFC = fc;
 
-	// SLAVE
-	*_aduPtr++ = slave;
-
-	// FC
-	*_aduPtr++ = fc;
+	_next = _adu;
+	*_next++ = _currentSlave; // Slave
+	*_next++ = _currentFC; // Function code
 
 	return true;
 }
@@ -59,156 +50,21 @@ bool ModbusRTUMaster::prepareRequest(uint8_t slave, uint8_t fc) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool ModbusRTUMaster::sendRequest() {
 	// CRC
-	uint16_t crc = crc16(_adu, _aduPtr - _adu);
-	*_aduPtr++ = crc >> 8;
-	*_aduPtr++ = crc;
+	uint16_t crc = crc16(_adu, _next - _adu);
+	*_next++ = crc >> 8;
+	*_next++ = crc;
 
-	_state = PreSending;
+	setState(PreSending);
 	_last35Time = micros();
 
 	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool ModbusRTUMaster::sendReadRequest(uint8_t slave, uint8_t fc, uint16_t addr, uint16_t quantity) {
-	switch (fc) {
-		case ReadCoils:
-		case ReadDiscreteInputs:
-			if (quantity < 1 || quantity > 2000) {
-				// Invalid quantity
-				return false;
-			}
-			break;
+ModbusResponse ModbusRTUMaster::available() {
+	uint8_t *responsePDU = nullptr;
 
-		case ReadHoldingRegisters:
-		case ReadInputRegisters:
-			if (quantity < 1 || quantity > 125) {
-				// Invalid quantity
-				return false;
-			}
-			break;
-
-		default:
-			// Invalid FC
-			return false;
-	}
-
-	if (!prepareRequest(slave, fc)) {
-		// Request prepare error
-		return false;
-	}
-
-	// DATA
-	*_aduPtr++ = addr >> 8;
-	*_aduPtr++ = addr;
-	*_aduPtr++ = quantity >> 8;
-	*_aduPtr++ = quantity;
-
-	// START SEND PROCESS
-	return sendRequest();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool ModbusRTUMaster::sendWriteSingleRequest(uint8_t slave, uint8_t fc, uint16_t addr, uint16_t value) {
-	switch (fc) {
-		case WriteSingleCoil:
-		case WriteSingleRegister:
-			break;
-
-		default:
-			// Invalid FC
-			return false;
-	}
-
-	if (!prepareRequest(slave, fc)) {
-		// Request prepare error
-		return false;
-	}
-
-	// DATA
-	*_aduPtr++ = addr >> 8;
-	*_aduPtr++ = addr;
-	*_aduPtr++ = value >> 8;
-	*_aduPtr++ = value;
-
-	// START SEND PROCESS
-	return sendRequest();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool ModbusRTUMaster::writeMultipleCoils(uint8_t slave, uint16_t addr, const bool *values, uint16_t quantity) {
-	if (quantity < 1 || quantity > 0x07b0) {
-		// Invalid quantity
-		return false;
-	}
-
-	if (!prepareRequest(slave, WriteMultipleCoils)) {
-		// Request prepare error
-		return false;
-	}
-
-	// DATA
-	*_aduPtr++ = addr >> 8;
-	*_aduPtr++ = addr;
-	*_aduPtr++ = quantity >> 8;
-	*_aduPtr++ = quantity;
-	*_aduPtr++ = ((quantity - 1) >> 3) + 1;
-
-	uint8_t bit = 0;
-	const bool *ptr = values;
-	*_aduPtr = 0;
-	while (quantity > 0) {
-		*_aduPtr |= (*ptr++ ? 1 : 0) << bit;
-		if (bit == 7) {
-			bit = 0;
-			*(++_aduPtr) = 0;
-		} else {
-			++bit;
-		}
-		--quantity;
-	}
-	if (bit > 0) {
-		++_aduPtr;
-	}
-
-	// START SEND PROCESS
-	return sendRequest();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool ModbusRTUMaster::writeMultipleRegisters(uint8_t slave, uint16_t addr, const uint16_t *values, uint16_t quantity) {
-	if (quantity < 1 || quantity > 0x007b) {
-		// Invalid quantity
-		return false;
-	}
-
-	if (!prepareRequest(slave, WriteMultipleRegisters)) {
-		// Request prepare error
-		return false;
-	}
-
-	// DATA
-	*_aduPtr++ = addr >> 8;
-	*_aduPtr++ = addr;
-	*_aduPtr++ = quantity >> 8;
-	*_aduPtr++ = quantity;
-	*_aduPtr++ = quantity << 1;
-
-	const uint16_t *ptr = values;
-	while (quantity-- > 0) {
-		*_aduPtr++ = *ptr >> 8;
-		*_aduPtr++ = *ptr++;
-	}
-
-	// START SEND PROCESS
-	return sendRequest();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-ModbusRTUResponse ModbusRTUMaster::available() {
-	uint8_t *responsePdu = nullptr;
-
-	if (_state == PreSending) {
+	if (getState() == PreSending) {
 		if (micros() - _last35Time > _t35us) {
 			// Flush received bytes
 			while (_serial.available()) {
@@ -216,51 +72,52 @@ ModbusRTUResponse ModbusRTUMaster::available() {
 			}
 
 			// Start sending
-			_state = Sending;
-			_serial.write(_adu, _aduPtr - _adu);
+			setState(Sending);
+			_serial.write(_adu, _next - _adu);
 		}
 	}
 
-	if (_state == Sending) {
+	if (getState() == Sending) {
 		if (_serial.availableForWrite() >= SERIAL_TX_BUFFER_SIZE - 1) {
 			// Transmission finished -> start T3.5
-			_state = PostSending;
+			setState(PostSending);
 			_last35Time = micros();
 		}
 	}
 
-	if (_state == PostSending) {
+	if (getState() == PostSending) {
 		if (micros() - _last35Time > _t35us) {
 			// T3.5 expired -> start waiting response
-			_state = WaitingResponse;
+			setState(WaitingResponse);
 			_lastRequestTime = millis();
 		}
 	}
 
-	if (_state == WaitingResponse) {
+	if (getState() == WaitingResponse) {
 		if (_serial.available()) {
 			// Data is available -> start receiving
-			_state = Receiving;
-			_aduPtr = _adu;
+			setState(Receiving);
+			_next = _adu;
 			_last15Time = micros();
 		} else if (millis() - _lastRequestTime > MODBUS_RTU_RESPONSE_TIMEOUT) {
 			// Response timeout error
-			_state = Idle;
+			setState(Idle);
 			// TODO notify to user
+			Serial.println("timeout");
 		}
 	}
 
-	if (_state == Receiving) {
+	if (getState() == Receiving) {
 		if (_serial.available()) {
 			do {
 				// Check ADU buffer used length
-				if (_aduPtr - _adu >= MODBUS_RTU_ADU_SIZE) {
+				if (_next - _adu >= MODBUS_RTU_ADU_SIZE) {
 					// Overflow error
-					_state = Idle;
+					setState(Idle);
 					// TODO notify to user
 					break;
 				}
-				*_aduPtr++ = _serial.read();
+				*_next++ = _serial.read();
 
 				_last15Time = micros();
 			} while (_serial.available());
@@ -268,35 +125,39 @@ ModbusRTUResponse ModbusRTUMaster::available() {
 			// Response is finished
 
 			// Response length
-			uint16_t responseLen = _aduPtr - _adu;
+			uint16_t responseLen = _next - _adu;
 
 			// Check errors
 			if (responseLen < 3) {
 				// Bad length error
+				// TODO notify to user
 			} else {
 				// Calculate CRC of the response
 				uint16_t crc = crc16(_adu, responseLen - 2);
-				uint16_t responseCRC = (uint16_t(*(_aduPtr - 2)) << 8) | (*(_aduPtr - 1));
+				uint16_t responseCRC = (uint16_t(*(_next - 2)) << 8) | (*(_next - 1));
 				if (crc != responseCRC) {
 					// Invalid CRC error
 					// TODO notify to user
+					Serial.println("bad crc");
 				} else if (_adu[0] != _currentSlave) {
 					// Bad slave error
 					// TODO notify to user
+					Serial.println("bad slave");
 				} else if (_adu[1] != _currentFC) {
 					// Bad function code
 					// TODO notify to user
+					Serial.println("bad fc");
 				} else {
 					// TODO Check data length
 
 					// Valid response
-					responsePdu = _adu + 1;
+					responsePDU = _adu + 1;
 				}
 			}
 
-			_state = Idle;
+			setState(Idle);
 		}
 	}
 
-	return ModbusRTUResponse(_currentSlave, responsePdu);
+	return ModbusResponse(_currentSlave, responsePDU);
 }
