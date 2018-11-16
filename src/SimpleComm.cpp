@@ -124,7 +124,9 @@ bool SimpleCommClass::receive(Stream &stream, SimplePacket &packet) {
 				}
 
 				// Check destination
-				if (_rxBuffer[SYN_LEN + LEN_LEN] != _address) {
+				// if my address is 0 then receive all messages
+				// if destination address is 0 then it is a broadcast message
+				if (_address != 0 && _rxBuffer[SYN_LEN + LEN_LEN] != 0 && _rxBuffer[SYN_LEN + LEN_LEN] != _address) {
 					// It is not for me
 					_rxBufferLen = 0;
 					continue;

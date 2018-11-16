@@ -81,21 +81,35 @@ byte address = 1234;
 SimpleComm.begin(address);
 ```
 
-It is possible to send packets to a destination device, and optionally define the packet type.
+It is possible to send packets to a device with an address, and optionally define the packet type.
+
+```c++
+byte destination = 87;
+SimpleComm.send(RS485, packet, destination);
+SimpleComm.send(RS485, packet, destination, 0x33);
+```
+
+To send packets to all devices it is possible to send a broadcast packet with the destination field set to 0 (zero).
 
 ```c++
 byte destination = 0;
 SimpleComm.send(RS485, packet, destination);
-SimpleCOmm.send(RS485, packet, destination, 0x33);
 ```
 
 The `receive` function receives a packet from another device, using the stream. It returns true if a packet is really received.
 
 ```c++
 SimplePacket rxPacket;
-if (SimpleCommreceive(RS485, rxPacket)) {
+if (SimpleComm.receive(RS485, rxPacket)) {
     // A packet is received
 }
+```
+
+It is also possible to receive all the packets (sniffer mode) by setting the SimpleComm address to 0 (zero). This mode is useful when implementing a gateway node between Ethernet and RS-485.
+
+```c++
+byte address = 0;
+SimpleComm.begin(address);
 ```
 
 ### Filter
