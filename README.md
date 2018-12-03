@@ -21,8 +21,8 @@ Tools40 contains different modules:
 3. [Timer](#timer)
 4. [Pulses](#pulses)
 5. [Counter](#counter)
-6. [ModbusRTUMaster](#modbus rtu master)
-7. [ModbusTCPMaster](#modbus tcp master)
+6. [ModbusRTUMaster](#modbusrtumaster)
+7. [ModbusTCPMaster](#modbustcpmaster)
 
 ### SimpleComm
 
@@ -251,7 +251,7 @@ if (C.update(up, down, reset, preset) == HIGH) {
 }
 ```
 
-### Modbus RTU Master
+### ModbusRTUMaster
 
 The ModbusRTUMaster module implements the Modbus RTU Master capabilities.
 
@@ -361,7 +361,7 @@ The possible error codes are:
 0x04 SERVER DEVICE FAILURE
 ```
 
-### Modbus TCP Master
+### ModbusTCPMaster
 
 The ModbusTCPMaster module implements the Modbus TCP Master capabilities.
 
