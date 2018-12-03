@@ -21,7 +21,8 @@ Tools40 contains different modules:
 3. [Timer](#timer)
 4. [Pulses](#pulses)
 5. [Counter](#counter)
-6. [ModbusRTUMaster](#modbusrtumaster)
+6. [ModbusRTUMaster](#modbus rtu master)
+7. [ModbusTCPMaster](#modbus tcp master)
 
 ### SimpleComm
 
@@ -250,6 +251,213 @@ if (C.update(up, down, reset, preset) == HIGH) {
 }
 ```
 
-### ModbusRTUMaster
+### Modbus RTU Master
 
-TODO
+The ModbusRTUMaster module implements the Modbus RTU Master capabilities.
+
+```c++
+#include <ModbusRTUMaster.h>
+```
+
+It is possible to use any hardware Serial Arduino stream:
+
+* RS-485
+
+```c++
+#include <RS485.h>
+
+ModbusRTUMaster master(RS485);
+```
+
+* RS-232
+
+```c++
+#include <RS232.h>
+
+ModbusRTUMaster master(RS232);
+```
+
+Before using it, it is required to call the begin function in the setup, with the baudrate (default: 19200bps) and the serial mode (default: 8E1).
+
+```c++
+master.begin(9600, SERIAL_8E1);
+```
+
+The functions to read and write slave values are:
+
+```c++
+readCoils(slave_address, address, quantity);
+readDiscreteInputs(slave_address, address, quantity);
+readHoldingRegisters(slave_address, address, quantity);
+readInputRegisters(slave_address, address, quantity);
+writeSingleCoil(slave_address, address, value);
+writeSingleRegister(slave_address, address, value);
+writeMultipleCoils(slave_address, address, values, quantity);
+writeMultipleRegisters(slave_address, address, values, quantity);
+```
+
+Where
+* `slave_address` is the Modbus RTU slave address.
+* `address` is the coil, digital input, holding register or input register address. Usually this address is the coil, digital input, holding register or input register number minus 1: the holding register number `40009` has the address `8`.
+* `quantity` is the number of coils, digital inputs, holding registers or input registers to read/write.
+* `value` is the given value of the coil or holding registers on a write operation. Depending on the function the data type changes. A coil is represented by a `bool` value and a holding register is represented by a `uint16_t` value.
+
+On a multiple read/write function the `address` argument is the first element address.
+On a multiple write function the `values` argument is an array of values to write.
+
+It is important to notice that these functions are non-blocking, so they don't return the read value. They return `true` or `false` depending on the current module state. If there is a pending Modbus request, they return `false`.
+
+```c++
+// Read 5 holding registers from address 0x24 of slave with address 0x10
+if (master.readHoldingRegisters(0x10, 0x24, 5)) {
+	// OK, the request is being processed
+} else {
+	// ERROR, the master is not in an IDLE state
+}
+```
+
+There is the `available()` function to check for responses from the slave.
+
+```c++
+ModbusResponse response = master.available();
+if (response) {
+	// Process response
+}
+```
+
+The `ModbusResponse` implements some functions to get the response information:
+
+```c++
+hasError();
+getErrorCode();
+getSlave();
+getFC();
+isCoilSet(offset);
+isDiscreteInputSet(offset);
+isDiscreteSet(offset);
+getRegister(offset);
+```
+
+```c++
+ModbusResponse response = master.available();
+if (response) {
+	if (response.hasError()) {
+		// There is an error. You can get the error code with response.getErrorCode()
+	} else {
+		// Response ready: print the read holding registers
+		for (int i = 0; i < 5; ++i) {
+			Serial.println(response.getRegister(i);
+		}
+	}
+}
+```
+
+The possible error codes are:
+
+```
+0x01 ILLEGAL FUNCTION
+0x02 ILLEGAL DATA ADDRESS
+0x03 ILLEGAL DATA VALUE
+0x04 SERVER DEVICE FAILURE
+```
+
+### Modbus TCP Master
+
+The ModbusTCPMaster module implements the Modbus TCP Master capabilities.
+
+```c++
+#include <ModbusTCPMaster.h>
+
+ModbusTCPMaster master;
+```
+
+The ModbusTCPMaster module uses the EthernetClient to send requests to the slaves:
+
+```c++
+#ifdef MDUINO_PLUS
+#include <Ethernet2.h>
+#else
+#include <Ethernet.h>
+#endif
+
+EthernetClient client;
+```
+
+The functions to read and write slave values are:
+
+```c++
+readCoils(client, slave_address, address, quantity);
+readDiscreteInputs(client, slave_address, address, quantity);
+readHoldingRegisters(client, slave_address, address, quantity);
+readInputRegisters(client, slave_address, address, quantity);
+writeSingleCoil(client, slave_address, address, value);
+writeSingleRegister(client, slave_address, address, value);
+writeMultipleCoils(client, slave_address, address, values, quantity);
+writeMultipleRegisters(client, slave_address, address, values, quantity);
+```
+
+Where
+* `client` is the EthernetClient connected to the slave.
+* `slave_address` is the Modbus RTU slave address.
+* `address` is the coil, digital input, holding register or input register address. Usually this address is the coil, digital input, holding register or input register number minus 1: the holding register number `40009` has the address `8`.
+* `quantity` is the number of coils, digital inputs, holding registers or input registers to read/write.
+* `value` is the given value of the coil or holding registers on a write operation. Depending on the function the data type changes. A coil is represented by a `bool` value and a holding register is represented by a `uint16_t` value.
+
+On a multiple read/write function the `address` argument is the first element address.
+On a multiple write function the `values` argument is an array of values to write.
+
+It is important to notice that these functions are non-blocking, so they don't return the read value. They return `true` or `false` depending on the current module state. If there is a pending Modbus request or the client is not connected, they return `false`.
+
+```c++
+// Read 5 holding registers from address 0x24 of slave with address 0x10
+if (master.readHoldingRegisters(client, 0x10, 0x24, 5)) {
+	// OK, the request is being processed
+} else {
+	// ERROR, the master is not in an IDLE state
+}
+```
+
+There is the `available()` function to check for responses from the slave.
+
+```c++
+ModbusResponse response = master.available();
+if (response) {
+	// Process response
+}
+```
+
+The `ModbusResponse` implements some functions to get the response information:
+
+```c++
+hasError();
+getErrorCode();
+getSlave();
+getFC();
+isCoilSet(offset);
+isDiscreteInputSet(offset);
+isDiscreteSet(offset);
+getRegister(offset);
+```
+
+```c++
+ModbusResponse response = master.available();
+if (response) {
+	if (response.hasError()) {
+		// There is an error. You can get the error code with response.getErrorCode()
+	} else {
+		// Response ready: print the read holding registers
+		for (int i = 0; i < 5; ++i) {
+			Serial.println(response.getRegister(i);
+		}
+	}
+}
+```
+
+The possible error codes are:
+
+```
+0x01 ILLEGAL FUNCTION
+0x02 ILLEGAL DATA ADDRESS
+0x03 ILLEGAL DATA VALUE
+0x04 SERVER DEVICE FAILURE
+```
