@@ -102,8 +102,7 @@ ModbusResponse ModbusRTUMaster::available() {
 		} else if (millis() - _lastRequestTime > MODBUS_RTU_RESPONSE_TIMEOUT) {
 			// Response timeout error
 			setState(Idle);
-			// TODO notify to user
-			Serial.println("timeout");
+			// TODO notify to user: timeout
 		}
 	}
 
@@ -138,15 +137,12 @@ ModbusResponse ModbusRTUMaster::available() {
 				if (crc != responseCRC) {
 					// Invalid CRC error
 					// TODO notify to user
-					Serial.println("bad crc");
 				} else if (_adu[0] != _currentSlave) {
 					// Bad slave error
 					// TODO notify to user
-					Serial.println("bad slave");
 				} else if (_adu[1] != _currentFC) {
 					// Bad function code
 					// TODO notify to user
-					Serial.println("bad fc");
 				} else {
 					// TODO Check data length
 
