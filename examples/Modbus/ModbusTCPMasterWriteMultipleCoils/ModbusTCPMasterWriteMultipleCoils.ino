@@ -65,12 +65,18 @@ void loop() {
   // Send a request every 1000ms if connected to slave
   if (slave.connected()) {
     if (millis() - lastSentTime > 1000) {
-      // Send a Read Coils request to the slave with address 31
-      // It requests for 5 coils starting at address 0
+      // Set random values
+      bool values[5];
+      for (int i = 0; i < 5; ++i) {
+        values[i] = random() & 0x01;
+      }
+
+      // Send a Write Multiple Coils request to the slave with address 31
+      // It requests for setting 5 coils starting in address 0
       // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
       // blocking, so you can continue the program while the Modbus functions work. To check for
       // available responses, call modbus.available() function often.
-      if (!modbus.readCoils(slave, 31, 0, 5)) {
+      if (!modbus.writeMultipleCoils(slave, 31, 0, values, 5)) {
         // Failure treatment
         Serial.println("Request fail");
       }
@@ -88,13 +94,7 @@ void loop() {
           Serial.print("Error ");
           Serial.println(response.getErrorCode());
         } else {
-          // Get the coils values from the response
-          Serial.print("Coils values: ");
-          for (int i = 0; i < 5; ++i) {
-            Serial.print(response.isCoilSet(i));
-            Serial.print(',');
-          }
-          Serial.println();
+          Serial.println("Done");
         }
       }
     }

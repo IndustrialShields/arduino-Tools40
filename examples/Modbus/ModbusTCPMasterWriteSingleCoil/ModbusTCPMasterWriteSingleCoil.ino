@@ -36,10 +36,13 @@ ModbusTCPMaster modbus;
 EthernetClient slave;
 
 uint32_t lastSentTime = 0UL;
+bool coilValue;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
   Serial.begin(9600UL);
+
+  coilValue = false;
 
   // Begin Ethernet
   Ethernet.begin(mac, ip);
@@ -65,16 +68,17 @@ void loop() {
   // Send a request every 1000ms if connected to slave
   if (slave.connected()) {
     if (millis() - lastSentTime > 1000) {
-      // Send a Read Coils request to the slave with address 31
-      // It requests for 5 coils starting at address 0
+      // Send a Write Single Coil request to the slave with address 31
+      // It requests for setting the coil in address 0
       // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
       // blocking, so you can continue the program while the Modbus functions work. To check for
       // available responses, call modbus.available() function often.
-      if (!modbus.readCoils(slave, 31, 0, 5)) {
+      if (!modbus.writeSingleCoil(slave, 31, 0, coilValue)) {
         // Failure treatment
         Serial.println("Request fail");
       }
 
+      coilValue = !coilValue; // Toggle coil value
       lastSentTime = millis();
     }
 
@@ -88,13 +92,7 @@ void loop() {
           Serial.print("Error ");
           Serial.println(response.getErrorCode());
         } else {
-          // Get the coils values from the response
-          Serial.print("Coils values: ");
-          for (int i = 0; i < 5; ++i) {
-            Serial.print(response.isCoilSet(i));
-            Serial.print(',');
-          }
-          Serial.println();
+          Serial.println("Done");
         }
       }
     }

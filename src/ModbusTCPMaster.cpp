@@ -147,7 +147,7 @@ ModbusResponse ModbusTCPMaster::available() {
 							} else if (_adu[6] != _currentSlave) {
 								// Bad slave error
 								// TODO notify to user
-							} else if (_adu[7] != _currentFC) {
+							} else if (_adu[7] & 0x7f != _currentFC) {
 								// Bad function code
 								// TODO notify to user
 							} else {

@@ -25,6 +25,18 @@ class ModbusDevice {
 			IllegalDataValue		= 0x03,
 			ServerDeviceFailure		= 0x04,
 		};
+
+	protected:
+		inline uint8_t getState() const {
+			return _state;
+		}
+
+		inline void setState(uint8_t state) {
+			_state = state;
+		}
+
+	private:
+		uint8_t _state;
 };
 
 class ModbusFrame {

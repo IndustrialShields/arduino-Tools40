@@ -25,12 +25,12 @@
 
 // Ethernet configuration values
 uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress ip(10, 10, 10, 3);
-IPAddress slaveIp(10, 10, 10, 4);
+uint8_t ip[] = { 10, 10, 10, 3 };
+uint8_t slaveIp[] = { 10, 10, 10, 4 };
 uint16_t slavePort = 502;
 
 // Define the ModbusTCPMaster object
-ModbusTCPMaster modbus;
+ModbusTCPMaster master;
 
 // Ethernet client object used to connect to the slave
 EthernetClient slave;
@@ -57,41 +57,35 @@ void loop() {
     slave.stop();
 
     slave.connect(slaveIp, slavePort);
-    if (slave.connected()) {
-      Serial.println("Reconnected");
-    }
   }
 
   // Send a request every 1000ms if connected to slave
   if (slave.connected()) {
     if (millis() - lastSentTime > 1000) {
-      // Send a Read Coils request to the slave with address 31
-      // It requests for 5 coils starting at address 0
+      // Send a Read Input Registers request to the slave with address 31
+      // It requests for 6 registers starting at address 0
       // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
       // blocking, so you can continue the program while the Modbus functions work. To check for
-      // available responses, call modbus.available() function often.
-      if (!modbus.readCoils(slave, 31, 0, 5)) {
+      // available responses, call master.available() function often.
+      if (!master.readInputRegisters(slave, 31, 0, 6)) {
         // Failure treatment
-        Serial.println("Request fail");
       }
 
       lastSentTime = millis();
     }
 
     // Check available responses often
-    if (modbus.isWaitingResponse()) {
-      ModbusResponse response = modbus.available();
+    if (master.isWaitingResponse()) {
+      ModbusResponse response = master.available();
       if (response) {
         if (response.hasError()) {
           // Response failure treatment. You can use response.getErrorCode()
           // to get the error code.
-          Serial.print("Error ");
-          Serial.println(response.getErrorCode());
         } else {
-          // Get the coils values from the response
-          Serial.print("Coils values: ");
-          for (int i = 0; i < 5; ++i) {
-            Serial.print(response.isCoilSet(i));
+          // Get the input registers values from the response
+          Serial.print("Input registers values: ");
+          for (int i = 0; i < 6; ++i) {
+            Serial.print(response.getRegister(i));
             Serial.print(',');
           }
           Serial.println();
