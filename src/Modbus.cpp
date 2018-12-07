@@ -20,7 +20,7 @@ bool ModbusResponse::isDiscreteSet(uint16_t offset) const {
 
 	// ptr = PDU + FC (1) + BYTE COUNT (1) + OFFSET (offset / 8)
 	uint8_t *ptr = _pdu + 2 + (offset >> 3);
-	offset &= 0x03; // offset is the bit number
+	offset &= 0x07; // offset is the bit number
 	return (*ptr >> offset) & 0x01;
 }
 
