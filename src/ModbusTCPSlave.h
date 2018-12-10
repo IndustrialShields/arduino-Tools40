@@ -6,7 +6,7 @@
 
 class ModbusTCPSlave : public ModbusSlave {
 	public:
-		explicit ModbusTCPSlave(uint16_t port);
+		explicit ModbusTCPSlave(uint16_t port = 502);
 
 	public:
 		void begin();
