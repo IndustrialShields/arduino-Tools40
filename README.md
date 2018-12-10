@@ -512,7 +512,7 @@ Ethernet.begin(mac, ip);
 slave.begin();
 ```
 
-At this time the ModbusTCP server is runnning and the only important thing to do is to update the ModbusTCPSlave object often, and tret the registers mapping values to update variables, inputs and outputs.
+At this time the ModbusTCP server is runnning and the only important thing to do is to update the ModbusTCPSlave object often in the `loop` function, and tret the registers mapping values to update variables, inputs and outputs.
 
 ```c++
 // Update discrete inputs and input registers values
