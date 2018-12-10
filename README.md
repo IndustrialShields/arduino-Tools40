@@ -10,7 +10,7 @@ Tools40 implements some common functions and modules on industrial environment f
 
 ### Installing
 1. Download the [library](http://www.github.com/industrialshields/arduino-tools40) from the GitHub as a "ZIP" file.
-2. From the Arduino IDE, select the downloaded "ZIP" file in the menu "Sketch/Inlcude library/Add .ZIP library".
+2. From the Arduino IDE, select the downloaded "ZIP" file in the menu "Sketch/Include library/Add .ZIP library".
 3. Now you can open any example from the "File/Examples/Tools40" menu.
 
 ## Reference
@@ -23,6 +23,7 @@ Tools40 contains different modules:
 5. [Counter](#counter)
 6. [ModbusRTUMaster](#modbusrtumaster)
 7. [ModbusTCPMaster](#modbustcpmaster)
+8. [ModbusTCPSlave](#modbustcpslave)
 
 ### SimpleComm
 
@@ -460,4 +461,69 @@ The possible error codes are:
 0x02 ILLEGAL DATA ADDRESS
 0x03 ILLEGAL DATA VALUE
 0x04 SERVER DEVICE FAILURE
+```
+
+### ModbusTCPSlave
+
+The ModbusTCPSlave module implements the Modbus TCP Slave capabilities.
+
+```c++
+#include <ModbusTCPSlave.h>
+
+ModbusTCPSlave slave;
+```
+
+The default TCP port is the `502` but you can change it with:
+
+```c++
+// Set the TCP listening port to 510 instead of 502
+ModbusTCPSlave slave(510);
+```
+
+To map the coils, discrete inputs, holding registers and input registers addresses with the desired variables values, the module uses four variables arrays:
+
+```c++
+bool coils[NUM_COILS];
+bool discreteInputs[NUM_DISCRETE_INPUTS];
+uint16_t holdingRegistesr[NUM_HOLDING_REGISTERS];
+uint16_t inputRegisters[NUM_INPUT_REGISTERS];
+```
+
+The lengths of these arrays depend on the application and the registers usages. Obviously, the names of the arrays also depend on your preferences.
+
+To associate the registers arrays with the library it is possible to use these functions in the `setup`:
+
+```c++
+slave.setCoils(coils, NUM_COILS);
+slave.setDiscreteInputs(discreteInputs, NUM_DISCRETE_INPUTS);
+slave.setHoldingRegisters(holdingRegisters, NUM_HOLDING_REGISTERS);
+slave.setInputRegisters(inputRegisters, NUM_INPUT_REGISTERS);
+```
+
+It is not required to have all kind of registers mapping to work, only the used by the application.
+
+To start the ModbusTCP server, call the `begin` function after the registers mapping. It is also possible to call the `begin` function before the registers mapping. Remember to begin the Ethernet before the ModbusTCPSlave object in the `setup`.
+
+```c++
+// Init the Ethernet
+Ethernet.begin(mac, ip);
+
+// Init the ModbusTCPSlave object
+slave.begin();
+```
+
+At this time the ModbusTCP server is runnning and the only important thing to do is to update the ModbusTCPSlave object often, and tret the registers mapping values to update variables, inputs and outputs.
+
+```c++
+// Update discrete inputs and input registers values
+discreteInputs[0] = digitalRead(I0_7);
+inputRegisters[0] = analogRead(I0_0);
+// ...
+
+// Update the ModbusTCPSlave object
+slave.update();
+
+// Update coils and holding registers
+digitalWrite(Q0_0, coils[0]);
+// ...
 ```
