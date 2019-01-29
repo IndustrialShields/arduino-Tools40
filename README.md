@@ -278,10 +278,11 @@ ModbusRTUMaster master(RS485);
 ModbusRTUMaster master(RS232);
 ```
 
-Before using it, it is required to call the begin function in the setup, with the baudrate (default: 19200bps) and the serial mode (default: 8E1).
+Before using it, it is required to call the begin function in the setup for both the serial port and the Modbus variable. It is a good practise to set the baudrate (default: 19200bps) also in the Modbus variable to define the Modbus internal timeouts.
 
 ```c++
-master.begin(9600, SERIAL_8E1);
+RS485.begin(9600, HALFDUPLEX, SERIAL_8E1);
+master.begin(9600);
 ```
 
 The functions to read and write slave values are:
