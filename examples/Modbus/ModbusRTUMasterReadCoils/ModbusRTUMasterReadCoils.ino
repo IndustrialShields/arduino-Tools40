@@ -31,15 +31,24 @@ ModbusRTUMaster master(Serial1);
 #endif
 
 uint32_t lastSentTime = 0UL;
+const uint32_t baudrate = 38400UL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
   Serial.begin(9600UL);
 
+  // Start the serial port
+#if defined HAVE_RS485_HARD
+  RS485.begin(baudrate, HALFDUPLEX, SERIAL_8E1);
+#elif defined HAVE_RS232_HARD
+  RS232.begin(baudrate, SERIAL_8E1);
+#else
+  Serial1.begin(baudrate, SERIAL_8E1);
+#endif
+
   // Start the modbus master object.
   // It is possible to define the port rate (default: 19200)
-  // and the serial frame mode (default: SERIAL_8E1)
-  master.begin(19200UL, SERIAL_8E1);
+  master.begin(baudrate);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

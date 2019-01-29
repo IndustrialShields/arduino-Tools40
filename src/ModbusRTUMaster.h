@@ -9,7 +9,7 @@ class ModbusRTUMaster : public ModbusMaster {
 		explicit ModbusRTUMaster(HardwareSerial &serial);
 
 	public:
-		void begin(uint32_t rate = 19200UL, int mode = SERIAL_8E1);
+		void begin(uint32_t rate = 19200UL);
 
 		inline bool readCoils(uint8_t slave, uint16_t addr, uint16_t quantity) {
 			return sendReadRequest(slave, ReadCoils, addr, quantity);

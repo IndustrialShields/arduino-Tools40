@@ -9,9 +9,7 @@ ModbusRTUMaster::ModbusRTUMaster(HardwareSerial &serial) : _serial(serial) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void ModbusRTUMaster::begin(uint32_t rate, int mode) {
-	_serial.begin(rate, mode);
-
+void ModbusRTUMaster::begin(uint32_t rate) {
 	if (rate > 19200UL) {
 		// Recommended times for high speeds
 		_t35us = 1750UL; // us
