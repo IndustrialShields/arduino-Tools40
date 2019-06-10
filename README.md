@@ -117,7 +117,7 @@ SimpleComm.begin(address);
 ### Filter
 
 ```c++
-#include <AnalogFilter.h>
+#include <Filter.h>
 ```
 
 The filter module includes filtering software used to smooth analog inputs. This is really useful when you have an analog signal that is unstable.
@@ -132,7 +132,7 @@ The `update` function returns the filtered value according to the passed input v
 
 ```c++
 int input = analogRead(I0_0);
-aFilter.update(input);
+int filteredInput = aFilter.update(input);
 ```
 
 ### Timer
