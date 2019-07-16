@@ -1,5 +1,7 @@
 #include "ModbusTCPMaster.h"
 
+#if defined(ethernet_h)
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusTCPMaster::ModbusTCPMaster() {
 	_currentTransactionID = 0;
@@ -176,3 +178,5 @@ ModbusResponse ModbusTCPMaster::available() {
 
 	return ModbusResponse(_currentSlave, responsePDU);
 }
+
+#endif

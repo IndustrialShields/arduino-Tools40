@@ -4,6 +4,8 @@
 #include "ModbusTCP.h"
 #include "ModbusMaster.h"
 
+#if defined(ethernet_h)
+
 class ModbusTCPMaster : public ModbusMaster {
 	public:
 		explicit ModbusTCPMaster();
@@ -34,5 +36,7 @@ class ModbusTCPMaster : public ModbusMaster {
 
 		uint8_t _adu[MODBUS_TCP_ADU_SIZE];
 };
+
+#endif
 
 #endif

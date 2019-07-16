@@ -1,5 +1,7 @@
 #include "ModbusTCPSlave.h"
 
+#if defined(ethernet_h)
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusTCPSlave::ModbusTCPSlave(uint16_t port) : ModbusSlave(0), _server(port) {
 }
@@ -98,3 +100,5 @@ bool ModbusTCPSlave::sendResponse() {
 	// Send the packet
 	return _currentClient.write(_adu, tlen) == tlen;
 }
+
+#endif

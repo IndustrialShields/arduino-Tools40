@@ -5,20 +5,20 @@
 
 class Timer {
 	public:
-		explicit Timer(unsigned long presetTime);
+		explicit Timer(uint32_t presetTime);
 
 	public:
 		virtual int update(int in) = 0;
 
 	protected:
-		unsigned long _presetTime;
-		unsigned long _lastTime;
+		uint32_t _presetTime;
+		uint32_t _lastTime;
 		int _lastIn;
 };
 
 class PulseTimer : public Timer {
 	public:
-		explicit PulseTimer(unsigned long presetTime);
+		explicit PulseTimer(uint32_t presetTime);
 
 	public:
 		virtual int update(int in);
@@ -32,7 +32,7 @@ class PulseTimer : public Timer {
 template<int A, int B>
 class DelayTimer : public Timer {
 	public:
-		DelayTimer(unsigned long presetTime) : Timer(presetTime) {
+		DelayTimer(uint32_t presetTime) : Timer(presetTime) {
 			_lastIn = B;
 		}
 

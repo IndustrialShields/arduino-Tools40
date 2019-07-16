@@ -5,14 +5,14 @@
 
 class Counter {
 	public:
-		explicit Counter(unsigned long preset);
+		explicit Counter(uint32_t preset);
 
 	public:
 		virtual int update(int up, int down, int reset);
 
 	protected:
-		unsigned long _value;
-		unsigned long _preset;
+		uint32_t _value;
+		uint32_t _preset;
 		int _lastUp;
 		int _lastDown;
 };

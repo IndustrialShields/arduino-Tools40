@@ -18,14 +18,14 @@
 #include "Timer.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Timer::Timer(unsigned long presetTime) {
+Timer::Timer(uint32_t presetTime) {
 	_presetTime = presetTime;
 	_lastTime = 0UL;
 	_lastIn = LOW;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-PulseTimer::PulseTimer(unsigned long presetTime) : Timer(presetTime) {
+PulseTimer::PulseTimer(uint32_t presetTime) : Timer(presetTime) {
 	_running = false;
 }
 

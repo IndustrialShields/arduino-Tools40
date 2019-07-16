@@ -76,7 +76,11 @@ ModbusResponse ModbusRTUMaster::available() {
 	}
 
 	if (getState() == Sending) {
+#if defined(SERIAL_TX_BUFFER_SIZE)
 		if (_serial.availableForWrite() >= SERIAL_TX_BUFFER_SIZE - 1) {
+#else
+		if (_serial.availableForWrite() >= 0x7f - 1) {
+#endif
 			// Transmission finished -> start T3.5
 			setState(PostSending);
 			_last35Time = micros();

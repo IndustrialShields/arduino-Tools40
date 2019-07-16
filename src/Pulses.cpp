@@ -1,7 +1,8 @@
 #include "Pulses.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void startPulses(int pin, unsigned long freq, char precision) {
+void startPulses(int pin, uint32_t freq, uint8_t precision) {
+#if defined(__AVR__)
 	stopPulses(pin);
 
 	if (freq == 0) {
@@ -145,10 +146,12 @@ void startPulses(int pin, unsigned long freq, char precision) {
 			break;
 #endif // MDUINO || MDUINO_PLUS
 	}
+#endif // __AVR__
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void stopPulses(int pin) {
+#if defined(__AVR__)
 	switch (digitalPinToTimer(pin)) {
 		case TIMER0A:
 			TCCR0A &= 0b00111100;
@@ -234,4 +237,5 @@ void stopPulses(int pin) {
 			break;
 #endif // MDUINO || MDUINO_PLUS
 	}
+#endif // __AVR__
 }

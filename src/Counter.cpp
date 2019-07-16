@@ -18,7 +18,7 @@
 #include "Counter.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Counter::Counter(unsigned long preset) {
+Counter::Counter(uint32_t preset) {
 	_value = 0UL;
 	_preset = preset;
 	_lastUp = LOW;

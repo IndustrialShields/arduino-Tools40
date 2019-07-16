@@ -10,7 +10,7 @@ class Filter {
 
 // N: number of samples
 // T: sample period
-template<unsigned N, unsigned long T>
+template<size_t N, uint32_t T>
 class AnalogFilter : public Filter {
 	public:
 		explicit AnalogFilter() {
@@ -36,9 +36,9 @@ class AnalogFilter : public Filter {
 		}
 
 		int mean() {
-			int ret = 0;
-			int *ptr = _samples;
-			for (unsigned i = 0; i < N; ++i) {
+			uint32_t ret = 0;
+			uint16_t *ptr = _samples;
+			for (size_t i = 0; i < N; ++i) {
 				ret += *ptr++;
 			}
 
@@ -46,13 +46,13 @@ class AnalogFilter : public Filter {
 		}
 
 	private:
-		unsigned long _lastSampleTime;
-		int _samples[N];
-		unsigned _nextSample;
+		uint32_t _lastSampleTime;
+		uint16_t _samples[N];
+		size_t _nextSample;
 };
 
 // T: filtering time
-template<unsigned long T>
+template<uint32_t T>
 class DigitalFilter : public Filter {
 	public:
 		DigitalFilter() {
@@ -74,7 +74,7 @@ class DigitalFilter : public Filter {
 		}
 
 	private:
-		unsigned long _lastTime;
+		uint32_t _lastTime;
 		int _lastValue;
 };
 

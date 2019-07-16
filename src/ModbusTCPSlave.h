@@ -4,6 +4,8 @@
 #include "ModbusTCP.h"
 #include "ModbusSlave.h"
 
+#if defined(ethernet_h)
+
 class ModbusTCPSlave : public ModbusSlave {
 	public:
 		explicit ModbusTCPSlave(uint16_t port = 502);
@@ -25,5 +27,7 @@ class ModbusTCPSlave : public ModbusSlave {
 
 		uint8_t _adu[MODBUS_TCP_ADU_SIZE];
 };
+
+#endif
 
 #endif
