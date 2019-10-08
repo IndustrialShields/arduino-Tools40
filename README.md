@@ -1,4 +1,5 @@
 # Tools40 library
+### by [Industrial Shields](https://www.industrialshields.com)
 
 Tools40 implements some common functions and modules on industrial environment firmwares for Arduino based devices.
 
