@@ -3,11 +3,7 @@
 
 #if defined(MDUINO) || defined(MDUINO_PLUS)
 
-#if defined(MDUINO_PLUS)
-#include <Ethernet2.h>
-#else
 #include <Ethernet.h>
-#endif
 
 #include "Modbus.h"
 
