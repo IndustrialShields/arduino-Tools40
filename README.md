@@ -377,11 +377,7 @@ ModbusTCPMaster master;
 The ModbusTCPMaster module uses the EthernetClient to send requests to the slaves:
 
 ```c++
-#ifdef MDUINO_PLUS
-#include <Ethernet2.h>
-#else
 #include <Ethernet.h>
-#endif
 
 EthernetClient client;
 ```

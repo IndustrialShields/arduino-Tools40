@@ -4,7 +4,7 @@
 #include "ModbusTCP.h"
 #include "ModbusSlave.h"
 
-#if defined(ethernet_h)
+#if defined(ethernet_h) || defined(ethernet_h_)
 
 class ModbusTCPSlave : public ModbusSlave {
 	public:

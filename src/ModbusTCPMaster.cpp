@@ -1,6 +1,6 @@
 #include "ModbusTCPMaster.h"
 
-#if defined(ethernet_h)
+#if defined(ethernet_h) || defined(ethernet_h_)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusTCPMaster::ModbusTCPMaster() {

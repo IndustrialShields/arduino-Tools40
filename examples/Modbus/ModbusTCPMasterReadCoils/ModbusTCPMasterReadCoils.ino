@@ -15,13 +15,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ModbusTCPMaster.h>
-
-#if defined(MDUINO_PLUS)
-#include <Ethernet2.h>
-#else
 #include <Ethernet.h>
-#endif
+#include <ModbusTCPMaster.h>
 
 // Ethernet configuration values
 uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };

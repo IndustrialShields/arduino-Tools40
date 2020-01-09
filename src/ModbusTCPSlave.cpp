@@ -1,6 +1,6 @@
 #include "ModbusTCPSlave.h"
 
-#if defined(ethernet_h)
+#if defined(ethernet_h) || defined(ethernet_h_)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusTCPSlave::ModbusTCPSlave(uint16_t port) : ModbusSlave(0), _server(port) {

@@ -15,11 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if defined(MDUINO_PLUS)
-#include <Ethernet2.h>
-#else
 #include <Ethernet.h>
-#endif
 #include <SimpleComm.h>
 
 // You can define different types of messages.
