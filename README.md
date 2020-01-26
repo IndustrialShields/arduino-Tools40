@@ -3,6 +3,8 @@
 
 Tools40 implements some common functions and modules on industrial environment firmwares for Arduino based devices.
 
+***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+
 ## Gettings started
 
 ### Prerequisites
@@ -366,6 +368,8 @@ The possible error codes are:
 
 ### ModbusTCPMaster
 
+***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+
 The ModbusTCPMaster module implements the Modbus TCP Master capabilities.
 
 ```c++
@@ -462,6 +466,8 @@ The possible error codes are:
 ```
 
 ### ModbusTCPSlave
+
+***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
 
 The ModbusTCPSlave module implements the Modbus TCP Slave capabilities.
 
