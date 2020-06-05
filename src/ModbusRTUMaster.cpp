@@ -4,23 +4,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusRTUMaster::ModbusRTUMaster(HardwareSerial &serial) : _serial(serial) {
-	_t35us = 0UL;
-	_t15us = 0UL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ModbusRTUMaster::begin(uint32_t rate) {
-	if (rate > 19200UL) {
-		// Recommended times for high speeds
-		_t35us = 1750UL; // us
-		_t15us = 750UL; // us
-	} else {
-		// T3.5 = 3.5 * 10E6 us_per_s * 11 bits_per_char / rate bits_per_second
-		_t35us = 11UL * 3500000UL / rate;
-
-		// T1.5 = 1.5 * 10E6 us_per_s * 11 bits_per_char / rate bits_per_second
-		_t15us = 11UL * 1500000UL / rate;
-	}
+	_t35us = MODBUS_RTU_T35US(rate);
+	_t15us = MODBUS_RTU_T15US(rate);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,7 @@ class ModbusSlave : public ModbusDevice {
 		enum {
 			Idle,
 			Receiving,
+			PreSending,
 			Sending,
 		};
 
@@ -73,10 +74,9 @@ class ModbusSlave : public ModbusDevice {
 
 	protected:
 		uint8_t *_next;
-
-	private:
 		uint8_t _addr;
 
+	private:
 		bool *_coils;
 		uint16_t _numCoils;
 		bool *_discreteInputs;
@@ -86,5 +86,6 @@ class ModbusSlave : public ModbusDevice {
 		uint16_t *_inputRegisters;
 		uint16_t _numInputRegisters;
 };
+
 
 #endif // __ModbusSlave_H__
