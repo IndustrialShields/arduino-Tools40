@@ -108,13 +108,12 @@ void ModbusRTUSlave::update() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool ModbusRTUSlave::sendResponse() {
 	// Set length
-	uint16_t tlen = _next - _adu;
-
 	uint16_t crc = crc16(_adu, _next - _adu);
 	*_next++ = crc >> 8;
 	*_next++ = crc;
 
 	// Send the packet
+	uint16_t tlen = _next - _adu;
 	return _serial.write(_adu, tlen) == tlen;
 }
 

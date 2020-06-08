@@ -18,7 +18,7 @@
 #include <RS485.h>
 #include <ModbusRTUSlave.h>
 
-#define RS485_RATE 9600
+#define RS485_RATE 38400UL
 
 // Modbus registers mapping
 // This example uses the M-Duino21+ mapping
@@ -54,7 +54,7 @@ uint16_t analogOutputs[numAnalogOutputs];
 uint16_t analogInputs[numAnalogInputs];
 
 // Define the ModbusRTUSlave object with Modbus RTU slave address: 11
-ModbusRTUSlave modbus(RS485, 11);
+ModbusRTUSlave modbus(RS485, 31);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
@@ -77,7 +77,7 @@ void setup() {
   }
 
   // Init RS485
-  RS485.begin(RS485_RATE);
+  RS485.begin(RS485_RATE, HALFDUPLEX, SERIAL_8E1);
 
   // Init ModbusTCPSlave object
   modbus.begin(RS485_RATE);
