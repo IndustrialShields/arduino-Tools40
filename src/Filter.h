@@ -13,8 +13,10 @@ class Filter {
 template<size_t N, uint32_t T>
 class AnalogFilter : public Filter {
 	public:
-		explicit AnalogFilter() {
-			memset(_samples, 0, sizeof(int) * N);
+		explicit AnalogFilter(uint16_t initialValue = 0) {
+			for (size_t i = 0; i < N; ++i) {
+				_samples[i] = initialValue;
+			}
 			_nextSample = 0;
 			_lastSampleTime = 0;
 		}
@@ -55,9 +57,9 @@ class AnalogFilter : public Filter {
 template<uint32_t T>
 class DigitalFilter : public Filter {
 	public:
-		DigitalFilter() {
+		DigitalFilter(int initialValue = LOW) {
 			_lastTime = 0UL;
-			_lastValue = LOW;
+			_lastValue = initialValue;
 		}
 
 	public:
