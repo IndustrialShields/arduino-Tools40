@@ -151,6 +151,8 @@ uint8_t ModbusSlave::writeSingleCoil(uint8_t *data) {
 	}
 
 	// Keep the response equal to the request
+	// and send starting address and value
+	_next = data + 4;
 
 	return 0;
 }
@@ -164,13 +166,15 @@ uint8_t ModbusSlave::writeSingleRegister(uint8_t *data) {
 	uint16_t addr = (data[0] << 8) + data[1];
 	uint16_t value = (data[2] << 8) + data[3];
 
-	if (addr > _numHoldingRegisters) {
+	if (addr + 1 > _numHoldingRegisters) {
 		return IllegalDataAddress;
 	}
 
 	*(_holdingRegisters + addr) = value;
 
 	// Keep the response equal to the request
+	// and send starting address and value
+	_next = data + 4;
 
 	return 0;
 }
