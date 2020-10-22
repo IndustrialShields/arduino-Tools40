@@ -131,6 +131,12 @@ AnalogFilter<10, 2> aFilter;
 ```
 In this example, the sample time is 2ms and the number of samples is 10.
 
+It is also possible to call the constructor of the filter with an initial value.
+```c++
+AnalogFilter<10, 2> aFilter(24000);
+```
+Here the initial value of the filter is 24000, instead of 0 (the default).
+
 The `update` function returns the filtered value according to the passed input value as argument.
 
 ```c++
