@@ -13,7 +13,7 @@ class Filter {
 template<size_t N, uint32_t T>
 class AnalogFilter : public Filter {
 	public:
-		explicit AnalogFilter(uint16_t initialValue = 0) {
+		explicit AnalogFilter(int initialValue = 0) {
 			for (size_t i = 0; i < N; ++i) {
 				_samples[i] = initialValue;
 			}
@@ -38,8 +38,8 @@ class AnalogFilter : public Filter {
 		}
 
 		int mean() {
-			uint32_t ret = 0;
-			uint16_t *ptr = _samples;
+			int32_t ret = 0;
+			int16_t *ptr = _samples;
 			for (size_t i = 0; i < N; ++i) {
 				ret += *ptr++;
 			}
@@ -49,7 +49,7 @@ class AnalogFilter : public Filter {
 
 	private:
 		uint32_t _lastSampleTime;
-		uint16_t _samples[N];
+		int16_t _samples[N];
 		size_t _nextSample;
 };
 
