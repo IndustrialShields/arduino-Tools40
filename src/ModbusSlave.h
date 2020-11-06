@@ -51,26 +51,45 @@ class ModbusSlave : public ModbusDevice {
 		uint8_t readRegisters(uint8_t *data, const uint16_t *registers, uint16_t numRegisters);
 		uint8_t writeDigitalIO(uint8_t *data, bool *io, uint16_t numIOs);
 
+#if !defined(DISABLE_WRITE_COILS)
 		uint8_t writeSingleCoil(uint8_t *data);
-		uint8_t writeSingleRegister(uint8_t *data);
-		uint8_t writeMultipleCoils(uint8_t *data);
-		uint8_t writeMultipleRegisters(uint8_t *data);
+#endif
 
+#if !defined(DISABLE_WRITE_REGISTERS)
+		uint8_t writeSingleRegister(uint8_t *data);
+#endif
+
+#if !defined(DISABLE_WRITE_COILS)
+		uint8_t writeMultipleCoils(uint8_t *data);
+#endif
+
+#if !defined(DISABLE_WRITE_REGISTERS)
+		uint8_t writeMultipleRegisters(uint8_t *data);
+#endif
+
+#if !defined(DISABLE_READ_COILS)
 		inline uint8_t readCoils(uint8_t *data) {
 			return readDigitalIO(data, _coils, _numCoils);
 		}
+#endif
 
+#if !defined(DISABLE_READ_DISCRETE_INPUTS)
 		inline uint8_t readDiscreteInputs(uint8_t *data) {
 			return readDigitalIO(data, _discreteInputs, _numDiscreteInputs);
 		}
+#endif
 
+#if !defined(DISABLE_READ_HOLDING_REGISTERS)
 		inline uint8_t readHoldingRegisters(uint8_t *data) {
 			return readRegisters(data, _holdingRegisters, _numHoldingRegisters);
 		}
+#endif
 
+#if !defined(DISABLE_READ_INPUT_REGISTERS)
 		inline uint8_t readInputRegisters(uint8_t *data) {
 			return readRegisters(data, _inputRegisters, _numInputRegisters);
 		}
+#endif
 
 	protected:
 		uint8_t *_next;

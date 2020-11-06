@@ -39,22 +39,46 @@ uint8_t ModbusSlave::processRequest(uint8_t *pdu) {
 	*_next++ = fc;
 
 	switch (fc) {
+#if !defined(DISABLE_READ_COILS)
 		case ReadCoils:
 			return readCoils(pdu);
+#endif
+
+#if !defined(DISABLE_READ_DISCRETE_INPUTS)
 		case ReadDiscreteInputs:
 			return readDiscreteInputs(pdu);
+#endif
+
+#if !defined(DISABLE_READ_HOLDING_REGISTERS)
 		case ReadHoldingRegisters:
 			return readHoldingRegisters(pdu);
+#endif
+
+#if !defined(DISABLE_READ_INPUT_REGISTERS)
 		case ReadInputRegisters:
 			return readInputRegisters(pdu);
+
+#endif
+
+#if !defined(DISABLE_WRITE_COILS)
 		case WriteSingleCoil:
 			return writeSingleCoil(pdu);
+#endif
+
+#if !defined(DISABLE_WRITE_REGISTERS)
 		case WriteSingleRegister:
 			return writeSingleRegister(pdu);
+#endif
+
+#if !defined(DISABLE_WRITE_COILS)
 		case WriteMultipleCoils:
 			return writeMultipleCoils(pdu);
+#endif
+
+#if !defined(DISABLE_WRITE_REGISTERS)
 		case WriteMultipleRegisters:
 			return writeMultipleRegisters(pdu);
+#endif
 	}
 
 	return IllegalFunction;
@@ -130,6 +154,7 @@ uint8_t ModbusSlave::readRegisters(uint8_t *data, const uint16_t *registers, uin
 	return 0;
 }
 
+#if !defined(DISABLE_WRITE_COILS)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 uint8_t ModbusSlave::writeSingleCoil(uint8_t *data) {
 	if (!_coils) {
@@ -156,7 +181,9 @@ uint8_t ModbusSlave::writeSingleCoil(uint8_t *data) {
 
 	return 0;
 }
+#endif
 
+#if !defined(DISABLE_WRITE_REGISTERS)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 uint8_t ModbusSlave::writeSingleRegister(uint8_t *data) {
 	if (!_holdingRegisters) {
@@ -178,7 +205,9 @@ uint8_t ModbusSlave::writeSingleRegister(uint8_t *data) {
 
 	return 0;
 }
+#endif
 
+#if !defined(DISABLE_WRITE_COILS)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 uint8_t ModbusSlave::writeMultipleCoils(uint8_t *data) {
 	if (!_coils) {
@@ -211,7 +240,9 @@ uint8_t ModbusSlave::writeMultipleCoils(uint8_t *data) {
 
 	return 0;
 }
+#endif
 
+#if !defined(DISABLE_WRITE_REGISTERS)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 uint8_t ModbusSlave::writeMultipleRegisters(uint8_t *data) {
 	if (!_holdingRegisters) {
@@ -240,4 +271,5 @@ uint8_t ModbusSlave::writeMultipleRegisters(uint8_t *data) {
 
 	return 0;
 }
+#endif
 
