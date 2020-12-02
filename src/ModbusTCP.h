@@ -1,7 +1,7 @@
 #ifndef __ModbusTCP_H__
 #define __ModbusTCP_H__
 
-#if defined(MDUINO) || defined(MDUINO_PLUS)
+#if defined(MDUINO) || defined(MDUINO_PLUS) || defined(PLC10IOS)
 
 #include <Ethernet.h>
 
