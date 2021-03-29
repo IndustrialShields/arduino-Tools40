@@ -3,7 +3,7 @@
 
 Tools40 implements some common functions and modules on industrial environment firmwares for Arduino based devices.
 
-***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+***Both Pulses, ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
 
 ## Gettings started
 

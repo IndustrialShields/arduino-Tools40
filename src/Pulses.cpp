@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void startPulses(int pin, uint32_t freq, uint8_t precision) {
-#if defined(__AVR__)
+#if defined(MDUINO) || defined(MDUINO_PLUS) || defined (ARDBOX) || defined(ARDBOX_HF) || defined(ARDBOX_HF_PLUS) || defined(SPARTAN)
 	stopPulses(pin);
 
 	if (freq == 0) {
@@ -146,12 +146,12 @@ void startPulses(int pin, uint32_t freq, uint8_t precision) {
 			break;
 #endif // MDUINO || MDUINO_PLUS
 	}
-#endif // __AVR__
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void stopPulses(int pin) {
-#if defined(__AVR__)
+#if defined(MDUINO) || defined(MDUINO_PLUS) || defined (ARDBOX) || defined(ARDBOX_HF) || defined(ARDBOX_HF_PLUS) || defined(SPARTAN)
 	switch (digitalPinToTimer(pin)) {
 		case TIMER0A:
 			TCCR0A &= 0b00111100;
@@ -237,5 +237,5 @@ void stopPulses(int pin) {
 			break;
 #endif // MDUINO || MDUINO_PLUS
 	}
-#endif // __AVR__
+#endif
 }
