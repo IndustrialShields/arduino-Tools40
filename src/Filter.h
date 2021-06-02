@@ -30,6 +30,7 @@ class AnalogFilter : public Filter {
 	private:
 		void sample(int value) {
 			if (millis() - _lastSampleTime >= T) {
+				_lastSampleTime = millis();
 				_samples[_nextSample++] = value;
 				if (_nextSample >= N) {
 					_nextSample = 0;
