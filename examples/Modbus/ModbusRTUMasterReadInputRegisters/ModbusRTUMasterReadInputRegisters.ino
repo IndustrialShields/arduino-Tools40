@@ -2,7 +2,7 @@
    Copyright (c) 2018 Boot&Work Corp., S.L. All rights reserved
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as 
-published by
+   published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
    This program is distributed in the hope that it will be useful,
@@ -10,30 +10,38 @@ published by
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU Lesser General Public License for more details.
    You should have received a copy of the GNU Lesser General Public License
- along with this program. If not, see <http://www.gnu.org/licenses/>.
- */ #include <ModbusRTUMaster.h> // Define the ModbusRTUMaster object, 
-using the RS-485 or RS-232 port (depending on availability)
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <ModbusRTUMaster.h> // Define the ModbusRTUMaster object, using the RS-485 or RS-232 port (depending on availability)
 
 #if defined HAVE_RS485_HARD
 #include <RS485.h>
-ModbusRTUMaster master(RS485); #elif defined HAVE_RS232_HARD
+ModbusRTUMaster master(RS485);
+#elif defined HAVE_RS232_HARD
 #include <RS232.h>
-ModbusRTUMaster master(RS232); #else
+ModbusRTUMaster master(RS232);
+#else
 ModbusRTUMaster master(Serial1);
-#endif uint32_t lastSentTime = 0UL;
-const uint32_t baudrate = 38400UL; 
+#endif
+
+uint32_t lastSentTime = 0UL;
+const uint32_t baudrate = 38400UL;
+
 //////////////////////////////////////////////////////////////////
 void setup() {
- Serial.begin(9600UL); // Start the serial port
+  Serial.begin(9600UL); // Start the serial port
 #if defined HAVE_RS485_HARD
- RS485.begin(baudrate, HALFDUPLEX, SERIAL_8E1);
+  RS485.begin(baudrate, HALFDUPLEX, SERIAL_8E1);
 #elif defined HAVE_RS232_HARD
- RS232.begin(baudrate, SERIAL_8E1);
+  RS232.begin(baudrate, SERIAL_8E1);
 #else
- Serial1.begin(baudrate, SERIAL_8E1);
-#endif // Start the modbus master object.
- // It is possible to define the port rate (default: 19200)
- master.begin(baudrate);
+  Serial1.begin(baudrate, SERIAL_8E1);
+#endif
+
+  // Start the modbus master object.
+  // It is possible to define the port rate (default: 19200)
+  master.begin(baudrate);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
