@@ -6,6 +6,7 @@
 ModbusTCPMaster::ModbusTCPMaster() {
 	_currentTransactionID = 0;
 	_currentClient = nullptr;
+	_timeout = MODBUS_TCP_RESPONSE_TIMEOUT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +165,7 @@ ModbusResponse ModbusTCPMaster::available() {
 						}
 					}
 				} while (_currentClient->available());
-			} else if (millis() - _lastRequestTime > MODBUS_TCP_RESPONSE_TIMEOUT) {
+			} else if (millis() - _lastRequestTime > _timeout) {
 				// Response timeout error
 				setState(Idle);
 				// TODO notify to user
