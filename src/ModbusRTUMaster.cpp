@@ -10,6 +10,7 @@ ModbusRTUMaster::ModbusRTUMaster(HardwareSerial &serial) : _serial(serial) {
 void ModbusRTUMaster::begin(uint32_t rate) {
 	_t35us = MODBUS_RTU_T35US(rate);
 	_t15us = MODBUS_RTU_T15US(rate);
+	_timeout = MODBUS_RTU_RESPONSE_TIMEOUT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ ModbusResponse ModbusRTUMaster::available() {
 				// Discard first zero
 				_serial.read();
 			}
-		} else if (millis() - _lastRequestTime > MODBUS_RTU_RESPONSE_TIMEOUT) {
+		} else if (millis() - _lastRequestTime > _timeout) {
 			// Response timeout error
 			setState(Idle);
 #ifdef DEBUG

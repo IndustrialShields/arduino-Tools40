@@ -5,6 +5,7 @@
 
 #define MODBUS_DATA_SIZE				(252) // bytes
 #define MODBUS_PDU_SIZE 				(1 + MODBUS_DATA_SIZE) // PDU = FC (1) + DATA
+#define MODBUS_RESPONSE_TIMEOUT			1000
 
 class ModbusDevice {
 	public:
@@ -26,6 +27,10 @@ class ModbusDevice {
 			ServerDeviceFailure		= 0x04,
 		};
 
+		inline void setTimeout(uint32_t timeout) {
+			_timeout = timeout;
+		}
+
 	protected:
 		inline uint8_t getState() const {
 			return _state;
@@ -34,6 +39,7 @@ class ModbusDevice {
 		inline void setState(uint8_t state) {
 			_state = state;
 		}
+		uint32_t _timeout = MODBUS_RESPONSE_TIMEOUT;
 
 	private:
 		uint8_t _state;

@@ -75,7 +75,7 @@ bool ModbusTCPSlave::receiveRequest() {
 		} while (_currentClient.available());
 
 		_lastRequestTime = millis();
-	} else if (millis() - _lastRequestTime > MODBUS_TCP_RESPONSE_TIMEOUT) {
+	} else if (millis() - _lastRequestTime > _timeout) {
 		// Response timeout error
 		setState(Idle);
 		return false;
