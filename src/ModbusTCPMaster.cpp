@@ -125,7 +125,8 @@ ModbusResponse ModbusTCPMaster::available() {
 					if (responseLen >= MODBUS_TCP_ADU_SIZE) {
 						// Overflow error
 						setState(Idle);
-						// TODO notify to user
+
+						setException(OverflowException);
 						break;
 					}
 
@@ -143,16 +144,16 @@ ModbusResponse ModbusTCPMaster::available() {
 							uint16_t transactionID = (_adu[0] << 8) + _adu[1];
 							if (transactionID != _currentTransactionID) {
 								// Invalid transaction ID
-								// TODO notify to user
+								setException(InvalidTransactionIdException);
 							} else if (_adu[2] != 0x00 && _adu[3] != 0x00) {
 								// Invalid protocol ID
-								// TODO notify to user
+								setException(InvalidProtocolIdException);
 							} else if (_adu[6] != _currentSlave) {
 								// Bad slave error
-								// TODO notify to user
+								setException(BadSlaveErrorException);
 							} else if ((_adu[7] & 0x7f) != _currentFC) {
 								// Bad function code
-								// TODO notify to user
+								setException(BadFunctionCodeException);
 							} else {
 								// TODO Check data length
 
@@ -168,7 +169,7 @@ ModbusResponse ModbusTCPMaster::available() {
 			} else if (millis() - _lastRequestTime > _timeout) {
 				// Response timeout error
 				setState(Idle);
-				// TODO notify to user
+				setException(TimeoutException);
 			}
 		}
 	}

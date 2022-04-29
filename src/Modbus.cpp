@@ -1,5 +1,16 @@
 #include "Modbus.h"
 
+const char STR_NO_EXCEPTION[] = "";
+const char STR_TIMEOUT_EXCEPTION[] = "timeout";
+const char STR_OVERFLOW_EXCEPTION[] = "overflow";
+const char STR_INVALID_TRANSACTION_ID_EXCEPTION[] = "transaction id";
+const char STR_INVALID_PROTOCOL_ID_EXCEPTION[] = "protocol id";
+const char STR_BAD_SLAVE_ERROR_EXCEPTION[] = "bad slave error";
+const char STR_BAD_FUNCTION_CODE_EXCEPTION[] = "bad function code";
+const char STR_BAD_DATA_LENGTH_EXCEPTION[] = "bad data length";
+const char STR_CRC_EXCEPTION[] = "invalid crc";
+const char STR_UNKNOWN_EXCEPTION[] = "unknown exception";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ModbusFrame::ModbusFrame(uint8_t slave, uint8_t *pdu) {
 	_slave = slave;
