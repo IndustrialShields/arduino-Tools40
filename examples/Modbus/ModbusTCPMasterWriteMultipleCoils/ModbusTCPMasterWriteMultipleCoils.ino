@@ -22,7 +22,7 @@
 uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(10, 10, 10, 3);
 IPAddress slaveIp(10, 10, 10, 4);
-uint16_t slavePort = 502;
+const uint16_t slavePort = 502;
 
 // Define the ModbusTCPMaster object
 ModbusTCPMaster modbus;

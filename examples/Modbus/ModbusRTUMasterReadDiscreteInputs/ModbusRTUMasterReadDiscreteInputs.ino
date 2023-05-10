@@ -30,6 +30,7 @@ ModbusRTUMaster master(RS232);
 ModbusRTUMaster master(Serial1);
 #endif
 
+#define DISCRETE_INPUTS_TO_READ 7
 uint32_t lastSentTime = 0UL;
 const uint32_t baudrate = 38400UL;
 
@@ -56,11 +57,11 @@ void loop() {
   // Send a request every 1000ms
   if (millis() - lastSentTime > 1000) {
     // Send a Read Discrete Input request to the slave with address 31
-    // It requests for 7 discrete inputs starting at address 0
+    // It requests for DISCRETE_INPUTS_TO_READ discrete inputs starting at address 0
     // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
     // blocking, so you can continue the program while the Modbus functions work. To check for
     // available responses, call master.available() function often.
-    if (!master.readDiscreteInputs(31, 0, 7)) {
+    if (!master.readDiscreteInputs(31, 0, DISCRETE_INPUTS_TO_READ)) {
       // Failure treatment
     }
 
@@ -79,7 +80,7 @@ void loop() {
       } else {
         // Get the discrete inputs values from the response
         Serial.print("Discrete inputs values: ");
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < DISCRETE_INPUTS_TO_READ; ++i) {
           Serial.print(response.isDiscreteInputSet(i));
           Serial.print(',');
         }

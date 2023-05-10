@@ -21,7 +21,7 @@
 #define RS485_RATE 38400UL
 
 // Modbus registers mapping
-// This example uses the M-Duino21+ mapping
+// This example uses the M-Duino 21+ mapping
 int digitalOutputsPins[] = {
 #if defined(PIN_Q0_4)
   Q0_0, Q0_1, Q0_2, Q0_3, Q0_4,
@@ -33,7 +33,7 @@ int digitalInputsPins[] = {
 #endif
 };
 int analogOutputsPins[] = {
-#if defined(PIN_A0_7)
+#if defined(PIN_Q0_7)
   A0_5, A0_6, A0_7,
 #endif
 };
@@ -53,8 +53,21 @@ bool digitalInputs[numDigitalInputs];
 uint16_t analogOutputs[numAnalogOutputs];
 uint16_t analogInputs[numAnalogInputs];
 
-// Define the ModbusRTUSlave object with Modbus RTU slave address: 11
+// Define the ModbusRTUSlave object with Modbus RTU slave address: 31,
+// using the RS-485, RS-232 or Serial1 port, depending on availability
+#if defined HAVE_RS485_HARD
+#include <RS485.h>
 ModbusRTUSlave modbus(RS485, 31);
+
+#elif defined HAVE_RS232_HARD
+#include <RS232.h>
+ModbusRTUSlave modbus(RS232, 31);
+
+#else
+ModbusRTUSlave modbus(Serial1, 31);
+#endif
+
+const uint32_t baudrate = 38400UL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
@@ -76,10 +89,16 @@ void setup() {
     analogInputs[i] = analogRead(analogInputsPins[i]);
   }
 
-  // Init RS485
-  RS485.begin(RS485_RATE, HALFDUPLEX, SERIAL_8E1);
+  // Start the serial port
+#if defined HAVE_RS485_HARD
+  RS485.begin(baudrate, HALFDUPLEX, SERIAL_8E1);
+#elif defined HAVE_RS232_HARD
+  RS232.begin(baudrate, SERIAL_8E1);
+#else
+  Serial1.begin(baudrate, SERIAL_8E1);
+#endif
 
-  // Init ModbusTCPSlave object
+  // Init ModbusRTUSlave object
   modbus.begin(RS485_RATE);
 
   modbus.setCoils(digitalOutputs, numDigitalOutputs);
