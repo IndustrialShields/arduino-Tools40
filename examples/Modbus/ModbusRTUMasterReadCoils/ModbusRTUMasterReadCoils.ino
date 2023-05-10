@@ -30,6 +30,7 @@ ModbusRTUMaster master(RS232);
 ModbusRTUMaster master(Serial1);
 #endif
 
+#define COILS_TO_READ 5
 uint32_t lastSentTime = 0UL;
 const uint32_t baudrate = 38400UL;
 
@@ -56,11 +57,11 @@ void loop() {
   // Send a request every 1000ms
   if (millis() - lastSentTime > 1000) {
     // Send a Read Coils request to the slave with address 31
-    // It requests for 23 coils starting at address 10
+    // It requests for COILS_TO_READ coils starting at address 0
     // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
     // blocking, so you can continue the program while the Modbus functions work. To check for
     // available responses, call master.available() function often.
-    if (!master.readCoils(31, 10, 23)) {
+    if (!master.readCoils(31, 0, COILS_TO_READ)) {
       // Failure treatment
     }
 
@@ -76,11 +77,14 @@ void loop() {
         // to get the error code.
       } else {
         // Get the coil value from the response
-        bool coil = response.isCoilSet(0);
+        for (byte i = 0; i<COILS_TO_READ; i++) {
+          bool coil = response.isCoilSet(i);
 
-        // Treat the rest of coils values...
-        Serial.print("Coil: ");
-        Serial.println(coil);
+          Serial.print("Coil ");
+          Serial.print(i);
+          Serial.print(": ");
+          Serial.println(coil);
+        }
       }
     }
   }

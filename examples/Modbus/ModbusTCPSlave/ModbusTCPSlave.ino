@@ -21,7 +21,7 @@
 // Ethernet configuration values
 uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xEE };
 IPAddress ip(10, 10, 10, 4);
-int port = 502;
+const uint16_t port = 502;
 
 // Modbus registers mapping
 // This example uses the M-Duino21+ mapping
@@ -36,7 +36,7 @@ int digitalInputsPins[] = {
 #endif
 };
 int analogOutputsPins[] = {
-#if defined(PIN_A0_7)
+#if defined(PIN_Q0_7)
   A0_5, A0_6, A0_7,
 #endif
 };

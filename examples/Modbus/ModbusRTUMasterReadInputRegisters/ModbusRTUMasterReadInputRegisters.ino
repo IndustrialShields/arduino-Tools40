@@ -25,6 +25,7 @@ ModbusRTUMaster master(RS232);
 ModbusRTUMaster master(Serial1);
 #endif
 
+#define REGISTERS_TO_READ 1
 uint32_t lastSentTime = 0UL;
 const uint32_t baudrate = 38400UL;
 
@@ -49,11 +50,11 @@ void loop() {
   // Send a request every 1000ms
   if (millis() - lastSentTime > 1000) {
     // Send a Read Input Register request to the slave with address 31
-    // It requests for 1 register starting at address 0
+    // It requests for REGISTERS_TO_READ registers starting at address 0
     // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
     // blocking, so you can continue the program while the Modbus functions work. To check for
     // available responses, call master.available() function often.
-    if (!master.readInputRegisters(31, 0, 1)) {
+    if (!master.readInputRegisters(31, 0, REGISTERS_TO_READ)) {
       // Failure treatment
     }
     lastSentTime = millis();
@@ -68,10 +69,12 @@ void loop() {
         // to get the error code.
       } else {
         // Get the register value from the response
-        uint32_t reg = response.getRegister(0);
-
-        Serial.print("Reg: ");
-        Serial.println(reg);
+        Serial.print("Input Register values: ");
+        for (int i = 0; i < REGISTERS_TO_READ; ++i) {
+          Serial.print(response.getRegister(i));
+          Serial.print(',');
+        }
+        Serial.println();
       }
     }
   }

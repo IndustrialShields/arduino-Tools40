@@ -30,6 +30,7 @@ ModbusRTUMaster master(RS232);
 ModbusRTUMaster master(Serial1);
 #endif
 
+#define REGISTERS_TO_WRITE 3
 uint32_t lastSentTime = 0UL;
 const uint32_t baudrate = 38400UL;
 
@@ -58,16 +59,16 @@ void loop() {
 
     // Set random values
     uint16_t values[3];
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < REGISTERS_TO_WRITE; ++i) {
       values[i] = random(0, 256);
     }
 
     // Send a Write Multiple Register request to the slave with address 31
-    // It requests for setting 3 registers with random values between 0 and 256 starting in address 0
+    // It requests for setting REGISTERS_TO_WRITE registers with random values between 0 and 256 starting in address 0
     // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
     // blocking, so you can continue the program while the Modbus functions work. To check for
     // available responses, call modbus.available() function often.
-    if (!master.writeMultipleRegisters(31, 0, values, 3)) {
+    if (!master.writeMultipleRegisters(31, 0, values, REGISTERS_TO_WRITE)) {
       // Failure treatment
       Serial.println("Request fail");
     }

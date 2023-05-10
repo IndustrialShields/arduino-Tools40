@@ -30,6 +30,7 @@ ModbusRTUMaster master(RS232);
 ModbusRTUMaster master(Serial1);
 #endif
 
+#define COILS_TO_WRITE 5
 uint32_t lastSentTime = 0UL;
 const uint32_t baudrate = 38400UL;
 
@@ -63,11 +64,11 @@ void loop() {
     }
 
     // Send a Write Multiple Coils request to the slave with address 31
-    // It requests for setting 5 coils starting in address 0
+    // It requests for setting COILS_TO_WRITE coils starting in address 0
     // IMPORTANT: all read and write functions start a Modbus transmission, but they are not
     // blocking, so you can continue the program while the Modbus functions work. To check for
     // available responses, call modbus.available() function often.
-    if (!master.writeMultipleCoils(31, 0, values, 5)) {
+    if (!master.writeMultipleCoils(31, 0, values, COILS_TO_WRITE)) {
       // Failure treatment
       Serial.println("Request fail");
     }

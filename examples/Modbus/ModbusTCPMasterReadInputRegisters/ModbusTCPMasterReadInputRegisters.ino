@@ -20,9 +20,9 @@
 
 // Ethernet configuration values
 uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-uint8_t ip[] = { 10, 10, 10, 3 };
-uint8_t slaveIp[] = { 10, 10, 10, 4 };
-uint16_t slavePort = 502;
+IPAddress ip(10, 10, 10, 3);
+IPAddress slaveIp(10, 10, 10, 4);
+const uint16_t slavePort = 502;
 
 // Define the ModbusTCPMaster object
 ModbusTCPMaster master;
