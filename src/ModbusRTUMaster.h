@@ -45,6 +45,9 @@ class ModbusRTUMaster : public ModbusMaster {
 	private:
 		// Configuration properties
 		HardwareSerial &_serial;
+#if defined(ESP32)
+		uint16_t _tx_buffer_size;
+#endif
 		uint32_t _t35us;
 		uint32_t _t15us;
 
