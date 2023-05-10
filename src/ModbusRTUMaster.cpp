@@ -66,11 +66,16 @@ ModbusResponse ModbusRTUMaster::available() {
 	}
 
 	if (getState() == Sending) {
-#if defined(SERIAL_TX_BUFFER_SIZE)
+#if defined(AVR)
+	#if defined(SERIAL_TX_BUFFER_SIZE)
 		if (_serial.availableForWrite() >= SERIAL_TX_BUFFER_SIZE - 1) {
-#else
-		if (_serial.availableForWrite() >= 0x7f - 1) {
-#endif
+	#else
+		if (_serial.availableForWrite() >= 0x7f  - 1) {
+	#endif // SERIAL_TX_BUFFER_SIZE
+#endif // AVR
+#if defined(ESP32)
+		if (_serial.availableForWrite() >= _tx_buffer_size - 1) {
+#endif // ESP32
 			// Transmission finished -> start T3.5
 			setState(PostSending);
 			_last35Time = micros();

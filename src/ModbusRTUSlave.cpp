@@ -10,6 +10,10 @@ ModbusRTUSlave::ModbusRTUSlave(HardwareSerial &serial, uint8_t addr) : ModbusSla
 void ModbusRTUSlave::begin(uint32_t rate) {
 	_t35us = MODBUS_RTU_T35US(rate);
 	_t15us = MODBUS_RTU_T15US(rate);
+#if defined(ESP32)
+	_serial.flush();
+	_tx_buffer_size = _serial.availableForWrite();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,11 +98,16 @@ void ModbusRTUSlave::update() {
 	}
 
 	if (getState() == Sending) {
-#if defined(SERIAL_TX_BUFFER_SIZE)
+#if defined(AVR)
+	#if defined(SERIAL_TX_BUFFER_SIZE)
 		if (_serial.availableForWrite() >= SERIAL_TX_BUFFER_SIZE - 1) {
-#else
-		if (_serial.availableForWrite() >= 0x7f - 1) {
-#endif
+	#else
+		if (_serial.availableForWrite() >= 0x7f  - 1) {
+	#endif // SERIAL_TX_BUFFER_SIZE
+#endif // AVR
+#if defined(ESP32)
+		if (_serial.availableForWrite() >= _tx_buffer_size - 1) {
+#endif // ESP32
 			// Transmission finished
 			setState(Idle);
 		}
