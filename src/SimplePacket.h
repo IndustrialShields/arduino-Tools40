@@ -1,7 +1,7 @@
 #ifndef __SimplePacket_H__
 #define __SimplePacket_H__
 
-#include <Arduino.h>
+#include "SimplePacketConfig.h"
 
 class SimplePacket {
 	public:
@@ -20,15 +20,19 @@ class SimplePacket {
 		uint8_t getType() const;
 
 		// Payload (data) functions
-		bool setData(bool data);
-		bool setData(char data);
-		bool setData(unsigned char data);
-		bool setData(int data);
-		bool setData(unsigned int data);
-		bool setData(long data);
-		bool setData(unsigned long data);
-		bool setData(double data);
+		#if !defined(UNIVERSAL_CPP) && !defined(CUSTOM_TYPES)
+		bool setData(SP_BOOL data);
+		#endif
+		bool setData(SP_CHAR data);
+		bool setData(SP_UCHAR data);
+		bool setData(SP_INT data);
+		bool setData(SP_UINT data);
+		bool setData(SP_LONG data);
+		bool setData(SP_ULONG data);
+		bool setData(SP_DOUBLE data);
+		#ifdef SP_STRING_TYPE
 		bool setData(const String &data);
+		#endif
 		bool setData(const char *data);
 		bool setData(const void *data, uint8_t len);
 
