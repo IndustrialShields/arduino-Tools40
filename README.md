@@ -1,15 +1,15 @@
 # Tools40 library
 ### by [Industrial Shields](https://www.industrialshields.com)
 
-Tools40 implements some common functions and modules on industrial environment firmwares for Arduino based devices.
+Tools40 implements some common functions and modules on industrial environment firmwares for Arduino and ESP32 based devices.
 
-***Both Pulses, ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+***Both Pulses, ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other devices***.
 
 ## Gettings started
 
 ### Prerequisites
 1. The [Arduino IDE](http://www.arduino.cc) 1.8.0 or higher
-2. The [Industrial Shields Arduino boards](https://www.industrialshields.com/blog/industrial-shields-blog-1/post/installing-the-industrial-shields-boards-in-the-arduino-ide-63) (optional, used in the examples)
+2. The [Industrial Shields Arduino boards](https://www.industrialshields.com/blog/industrial-shields-blog-1/post/installing-the-industrial-shields-boards-in-the-arduino-ide-63) or the [Industrial Shields ESP32 boards](https://www.industrialshields.com/blog/industrial-shields-blog-1/post/installing-the-industrial-shields-boards-in-the-arduino-ide-63) equivalent (optional, used in the examples).
 
 ### Installing
 1. Download the [library](http://www.github.com/industrialshields/arduino-tools40) from the GitHub as a "ZIP" file.
@@ -34,7 +34,7 @@ Tools40 contains different modules:
 #include <SimpleComm.h>
 ```
 
-The **SimpleComm** module sends and receives data through any Arduino Stream: RS-485, RS-232, Ethernet... It is enough flexible to support different kind of communication typologies: Ad-hoc, Master-Slave, Client-Server, and so on, using an easy to use API. 
+The **SimpleComm** module sends and receives data through any Stream: RS-485, RS-232, Ethernet... It is enough flexible to support different kind of communication typologies: Ad-hoc, Master-Slave, Client-Server, and so on, using an easy to use API. 
 
 The **SimplePacket** class encapsulates the data into a packet.
 
@@ -77,7 +77,7 @@ const char *str = packet2.getString();
 const customType *var = (const customType*) packet3.getData();
 ```
 
-The **SimpleComm** class is the interface for sending and receiving packets through the desired Arduino Stream.
+The **SimpleComm** class is the interface for sending and receiving packets through the desired Stream.
 
 The `begin(byte)` function enables the communication system and sets the devices identifier/address. Each device has its own address which identifies it. Devices receive packets sent to them, using their address, but not to others.
 
@@ -187,6 +187,8 @@ if (TOFF.update(in) == HIGH) {
 
 ### Pulses
 
+**WARNING: This library is not available for ESP32, as it uses the Arduino timers.**
+
 ```c++
 #include <Pulses.h>
 ```
@@ -269,7 +271,7 @@ The ModbusRTUMaster module implements the Modbus RTU Master capabilities.
 #include <ModbusRTUMaster.h>
 ```
 
-It is possible to use any hardware Serial Arduino stream:
+It is possible to use any hardware Serial stream:
 
 * RS-485
 
@@ -374,7 +376,7 @@ The possible error codes are:
 
 ### ModbusTCPMaster
 
-***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino or ESP32 devices***
 
 The ModbusTCPMaster module implements the Modbus TCP Master capabilities.
 
@@ -473,7 +475,7 @@ The possible error codes are:
 
 ### ModbusTCPSlave
 
-***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino devices***
+***Both ModbusTCPMaster and ModbusTCPSlave are only available for Industrial Shields devices, but you can modify them to be used in other Arduino or ESP32 devices***
 
 The ModbusTCPSlave module implements the Modbus TCP Slave capabilities.
 
