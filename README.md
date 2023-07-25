@@ -117,6 +117,13 @@ byte address = 0;
 SimpleComm.begin(address);
 ```
 
+#### Compatibility between architectures
+This library relies on standard C++ types (e.g., unsigned long, int) which can function correctly if the communicating architectures maintain consistent type sizes. However, problems may arise if you try to communicate different CPU architectures, such as ESP32 and Arduino. The C++ types that are defined in each architecture have different sizes, which will cause communication errors.
+
+To ensure proper communication between different architectures and to address potential type size issues, the library provides a solution through the "SimplePacketConfig.h" header file. This file allows users to customise the types used in the library, thereby fixing the size of the types for proper communication:
+* If you uncomment `#define UNIVERSAL_CPP` the types used will be the minimum size according to the C++ standard.
+* If you uncomment `#define CUSTOM_TYPES`, the types used will be the size of what you define.
+
 ### Filter
 
 ```c++
