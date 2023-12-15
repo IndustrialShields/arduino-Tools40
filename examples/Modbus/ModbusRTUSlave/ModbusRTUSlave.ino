@@ -15,10 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <RS485.h>
 #include <ModbusRTUSlave.h>
-
-#define RS485_RATE 38400UL
 
 // Modbus registers mapping
 // This example uses the M-Duino 21+ mapping
@@ -99,7 +96,7 @@ void setup() {
 #endif
 
   // Init ModbusRTUSlave object
-  modbus.begin(RS485_RATE);
+  modbus.begin(baudrate);
 
   modbus.setCoils(digitalOutputs, numDigitalOutputs);
   modbus.setDiscreteInputs(digitalInputs, numDigitalInputs);
