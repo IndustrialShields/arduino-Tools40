@@ -105,10 +105,8 @@ ModbusResponse ModbusRTUMaster::available() {
 		} else if (millis() - _lastRequestTime > _timeout) {
 			// Response timeout error
 			setState(Idle);
-#ifdef DEBUG
-			Serial.println("----- TIMEOUT -----");
-#endif
-			// TODO notify to user: timeout
+
+			setException(TimeoutException);
 		}
 	}
 
@@ -119,10 +117,7 @@ ModbusResponse ModbusRTUMaster::available() {
 				if (_next - _adu >= MODBUS_RTU_ADU_SIZE) {
 					// Overflow error
 					setState(Idle);
-#ifdef DEBUG
-					Serial.println("----- OVERFLOW -----");
-#endif
-					// TODO notify to user
+					setException(OverflowException);
 					break;
 				}
 				*_next++ = _serial.read();
@@ -138,32 +133,20 @@ ModbusResponse ModbusRTUMaster::available() {
 			// Check errors
 			if (responseLen < 3) {
 				// Bad length error
-				// TODO notify to user
-#if DEBUG
-				Serial.println("Modbus bad length");
-#endif
+				setException(BadDataLengthException);
 			} else {
 				// Calculate CRC of the response
 				uint16_t crc = crc16(_adu, responseLen - 2);
 				uint16_t responseCRC = (uint16_t(*(_next - 2)) << 8) | (*(_next - 1));
 				if (crc != responseCRC) {
 					// Invalid CRC error
-					// TODO notify to user
-#if DEBUG
-					Serial.println("Modbus invalid CRC");
-#endif
+					setException(BadCRCException);
 				} else if (_adu[0] != _currentSlave) {
 					// Bad slave error
-					// TODO notify to user
-#if DEBUG
-					Serial.println("Modbus bad slave error");
-#endif
+					setException(BadSlaveErrorException);
 				} else if (_adu[1] != _currentFC) {
 					// Bad function code
-					// TODO notify to user
-#if DEBUG
-					Serial.println("Modbus bad function code");
-#endif
+					setException(BadFunctionCodeException);
 				} else {
 					// TODO Check data length
 

@@ -7,6 +7,17 @@
 #define MODBUS_PDU_SIZE 				(1 + MODBUS_DATA_SIZE) // PDU = FC (1) + DATA
 #define MODBUS_RESPONSE_TIMEOUT			1000
 
+extern const char STR_NO_EXCEPTION[];
+extern const char STR_TIMEOUT_EXCEPTION[];
+extern const char STR_OVERFLOW_EXCEPTION[];
+extern const char STR_INVALID_TRANSACTION_ID_EXCEPTION[];
+extern const char STR_INVALID_PROTOCOL_ID_EXCEPTION[];
+extern const char STR_BAD_SLAVE_ERROR_EXCEPTION[];
+extern const char STR_BAD_FUNCTION_CODE_EXCEPTION[];
+extern const char STR_BAD_DATA_LENGTH_EXCEPTION[];
+extern const char STR_CRC_EXCEPTION[];
+extern const char STR_UNKNOWN_EXCEPTION[];
+
 class ModbusDevice {
 	public:
 		enum FunctionCodes {
@@ -27,11 +38,77 @@ class ModbusDevice {
 			ServerDeviceFailure		= 0x04,
 		};
 
+		enum Exceptions {
+			NoException = 0,
+			TimeoutException,
+			OverflowException,
+			InvalidTransactionIdException,
+			InvalidProtocolIdException,
+			BadSlaveErrorException,
+			BadFunctionCodeException,
+			BadDataLengthException,
+			BadCRCException
+		};
+
+		const char* getExceptionMessage() {
+			return getExceptionMessage(_exception);
+		}
+
+		const char* getExceptionMessage(enum Exceptions e) {
+			switch(e) {
+				case NoException:
+					return STR_NO_EXCEPTION;
+				break;
+				case TimeoutException:
+					return STR_TIMEOUT_EXCEPTION;
+				break;
+				case OverflowException:
+					return STR_OVERFLOW_EXCEPTION;
+				break;
+				case InvalidTransactionIdException:
+					return STR_INVALID_TRANSACTION_ID_EXCEPTION;
+				break;
+				case InvalidProtocolIdException:
+					return STR_INVALID_PROTOCOL_ID_EXCEPTION;
+				break;
+				case BadSlaveErrorException:
+					return STR_BAD_SLAVE_ERROR_EXCEPTION;
+				break;
+				case BadFunctionCodeException:
+					return STR_BAD_FUNCTION_CODE_EXCEPTION;
+				break;
+				case BadDataLengthException:
+					return STR_BAD_DATA_LENGTH_EXCEPTION;
+				break;
+				case BadCRCException:
+					return STR_CRC_EXCEPTION;
+				break;
+			}
+
+			return STR_UNKNOWN_EXCEPTION;
+		}
+
 		inline void setTimeout(uint32_t timeout) {
 			_timeout = timeout;
 		}
 
+		inline bool hasException() {
+			return _exception != NoException;
+		}
+
+		inline enum Exceptions getException() {
+			return _exception;
+		}
+
+		inline void clearException() {
+			_exception = NoException;
+		}
+
 	protected:
+		inline void setException(enum Exceptions e) {
+			_exception = e;
+		}
+
 		inline uint8_t getState() const {
 			return _state;
 		}
@@ -43,6 +120,7 @@ class ModbusDevice {
 
 	private:
 		uint8_t _state;
+		enum Exceptions _exception = NoException;
 };
 
 class ModbusFrame {
